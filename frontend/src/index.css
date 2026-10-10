@@ -1,16 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Clarity+City:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Clarity+City:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 :root{
   --bg: #1A2033;
-  --nav-bar-color: #131824;
+  --panel-bg: #131824;
   --text: #ACB6C4;
   --header-font-family: "Clarity City", "Calibri";
   --text-font-family: "Open Sans", "Calibri";
   --header-size: 30px;
   --text-size: 15px;
+  --border-color: #4f5761;
   background: var(--bg);
 }
 
-h1, h2, p, a, span {
+h1, h2, h3, p, a, span {
   color: var(--text);
   font-family: var(--text-font-family);
   cursor: default;
@@ -23,9 +24,24 @@ a {
   cursor: pointer;
 }
 
-h1, h2 {
+h1, h2, h3 {
   font-family: var(--header-font-family);
   font-size: var(--header-size);
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 25px;
+}
+
+h3 {
+  font-size: 22px;
+}
+
+h1.title {
+  font-family: "Bitcount Single", "calibri";
+  font-size: 20px;
+  font-weight: 250;
 }
 
 ul {

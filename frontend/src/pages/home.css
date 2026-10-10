@@ -1,0 +1,33 @@
+.recent-activity {
+	margin-top: 20px;
+	background-color: var(--panel-bg);
+	border-radius: 15px;
+	border: 2px solid var(--border-color);
+	box-shadow: 4px 4px 10px #32323c;
+	h2 {
+		padding: 15px;
+	}
+}
+
+.recent-activity-list {
+	height: 350px;
+  overflow-x: auto;
+  overflow-y: hidden;
+	display: flex;
+	flex-direction: row;
+	gap: 15px;
+	padding: 15px;
+	scrollbar-color: aqua;
+}
+
+.recent-activity-panel {
+	background-color: #B8B8F3;
+	min-width: 150px;
+	max-width: 300px;
+	border-radius: 15px;
+	padding: 15px;
+	box-shadow: 4px 4px 10px #a6a6e2;
+	h3, p {
+		color: var(--bg);
+	}
+}
