@@ -32,6 +32,7 @@ h1, h2, h3 {
 
 h2 {
   font-size: 25px;
+  margin-bottom: 0px;
 }
 
 h3 {
@@ -41,10 +42,36 @@ h3 {
 h1.title {
   font-family: "Bitcount Single", "calibri";
   font-size: 20px;
-  font-weight: 250;
+  font-weight: 300;
 }
 
 ul {
   list-style: none;
   padding-inline-start: 0px;
+}
+
+.panel {
+  background-color: var(--panel-bg);
+	border-radius: 15px;
+	border: 2px solid var(--border-color);
+	box-shadow: 4px 4px 10px #32323c;
+	overflow: hidden;
+  margin-top: 15px;
+	h2 {
+		padding: 15px;
+	}
+}
+
+::-webkit-scrollbar {
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2d2d5f;
+  border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #41417c;
+  border-radius: 50px;
 }

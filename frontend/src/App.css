@@ -67,15 +67,15 @@ h1 {
     margin-top: auto;
 }
 
-.main-content {
-	margin-left: 225px;
-	width: calc(100% - 225px);
-	box-sizing: border-box;
-	height: 100%;
-	padding: 15px;
-}
-
 .sidebar.closed + .main-content {
 	margin-left:75px;
 	width: calc(100% - 75px);
+}
+
+.main-content {
+	margin-left: 225px;
+	min-width: calc(100% - 225px);
+	box-sizing: border-box;
+	height: 100%;
+	padding: 15px;
 }

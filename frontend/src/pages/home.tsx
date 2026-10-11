@@ -1,5 +1,9 @@
 import "./home.css";
 
+function handleWheel(e: React.WheelEvent<HTMLElement>) {
+  e.currentTarget.scrollLeft += e.deltaY;
+}
+
 function RecentActivityPanel(props: { title: string; description: string; date: string; image: string }) {
   return (
     <>
@@ -19,13 +23,14 @@ function Home() {
   }
   return (
     <>
-      <h1 className="title">Hello Jonny!</h1>
       <h1>Dashboard</h1>
-      <div className="recent-activity">
+      <h1 className="title">Hello Jonny!</h1>
+      <div className="recent-activity panel">
         <h2>Recent Acitivity</h2>
-        <div className="recent-activity-list">{Activities}</div>
+        <div className="recent-activity-list" onWheel={handleWheel}>
+          {Activities}
+        </div>
       </div>
-      <div className="storage-container"></div>
     </>
   );
 }
