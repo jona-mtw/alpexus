@@ -11,32 +11,41 @@
   background: var(--bg);
 }
 
-h1, h2, h3, p, a, span {
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, p, a, span {
   color: var(--text);
   font-family: var(--text-font-family);
   cursor: default;
   padding: 0;
+  margin: 0;
   font-size: var(--text-size);
 }
 
-a {
+a, span {
   text-decoration: none;
   cursor: pointer;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
   font-family: var(--header-font-family);
   font-size: var(--header-size);
-  margin-top: 0;
 }
 
 h2 {
   font-size: 25px;
-  margin-bottom: 0px;
 }
 
 h3 {
   font-size: 22px;
+}
+
+h4 {
+  font-size: 18px;
 }
 
 h1.title {
@@ -53,8 +62,8 @@ ul {
 .panel {
   background-color: var(--panel-bg);
 	border-radius: 15px;
-	border: 2px solid var(--border-color);
-	box-shadow: 4px 4px 10px #32323c;
+	/* border: 2px solid var(--border-color); */
+	box-shadow: 4px 4px 10px #15151a;
 	overflow: hidden;
   margin-top: 15px;
 	h2 {
@@ -64,6 +73,7 @@ ul {
 
 ::-webkit-scrollbar {
   height: 5px;
+  width: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -74,4 +84,8 @@ ul {
 ::-webkit-scrollbar-thumb {
   background: #41417c;
   border-radius: 50px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7765E3;
 }

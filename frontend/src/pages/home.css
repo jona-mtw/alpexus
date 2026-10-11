@@ -1,3 +1,29 @@
+.dashboard {
+	display: flex;
+	align-items: flex-start;
+	height: 100%;
+	overflow: auto;
+	background: var(--bg);
+	border-radius: 15px;
+	height: calc(100% - 50px);
+	padding-bottom: 5px;
+}
+
+.dashboard-info {
+	flex: 1;
+	min-width: 408px;
+	padding: 15px;
+	height: calc(100% - 30px);
+	overflow-x: auto;
+}
+
+.dashboard-sidebar {
+	width: 250px;
+	flex-shrink: 0;
+	height: inherit;
+	display: flex;
+}
+
 .recent-activity {
 	margin-top: 20px;
 }
@@ -24,3 +50,4 @@
 		color: var(--bg);
 	}
 }
+

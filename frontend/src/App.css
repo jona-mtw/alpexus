@@ -68,14 +68,16 @@ h1 {
 }
 
 .sidebar.closed + .main-content {
-	margin-left:75px;
+	margin-left:70px;
 	width: calc(100% - 75px);
 }
 
 .main-content {
-	margin-left: 225px;
-	min-width: calc(100% - 225px);
+	margin-left: 220px;
+	width: calc(100% - 225px);
 	box-sizing: border-box;
-	height: 100%;
-	padding: 15px;
+	height: 100svh;
+	display: flex;
+	align-items: center;
+	background: var(--panel-bg);
 }
