@@ -28,7 +28,7 @@
 .closed {
 	width: 70px;
 	i {
-		display: visible;
+		visibility: visible;
 	}
 	p.nav-bar-text, h1 {
 		display: none;
@@ -66,7 +66,7 @@ h1 {
     margin-top: auto;
 }
 
-.sidebar.closed + .main-content {
+.sidebar.closed + main {
 	margin-left:70px;
 	width: calc(100% - 75px);
 }
@@ -79,4 +79,13 @@ main {
 	display: flex;
 	align-items: center;
 	background: var(--panel-bg);
+}
+
+.quick-access {
+	display: flex;
+}
+
+.panel-header {
+	display: flex;
+	align-items: center;
 }

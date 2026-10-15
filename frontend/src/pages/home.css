@@ -64,3 +64,18 @@
 		color: var(--bg);
 	}
 }
+
+.quick-access {
+	gap: 15px;
+}
+
+.files-quick-access, .notes-quick-access {
+	padding: 15px;
+	flex: 1;
+	.panel-header {
+		gap: 15px;
+		h2 {
+			padding: 0;
+		}
+	}
+}
