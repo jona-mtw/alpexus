@@ -6,11 +6,53 @@ function StorageContainer() {
       <div className="storage-container">
         <h2>Storage</h2>
         <div className="storage-gauge">
-          <div className="gauge"></div>
-          <h4>9.4GB</h4>
-          <p>of 15GB capacity</p>
+          <div className="gauge">
+            <h4>9.4GB</h4>
+            <p>of 15GB capacity</p>
+          </div>
         </div>
-        <div className="storage-info"></div>
+        <div className="storage-detailed-info">
+          <div className="photo storage-info">
+            <div className="storage-info-header-wrapper">
+              <i className="fa-solid fa-image"></i>
+              <div className="storage-info-header">
+                <h4>Images</h4>
+                <p>54 files</p>
+              </div>
+            </div>
+            <p className="file-size">86MB</p>
+          </div>
+          <div className="documents storage-info">
+            <div className="storage-info-header-wrapper">
+              <i className="fa-solid fa-file-lines"></i>
+              <div className="storage-info-header">
+                <h4>Documents</h4>
+                <p>54 files</p>
+              </div>
+            </div>
+            <p className="file-size">86MB</p>
+          </div>
+          <div className="media storage-info">
+            <div className="storage-info-header-wrapper">
+              <i className="fa-brands fa-youtube"></i>
+              <div className="storage-info-header">
+                <h4>Media</h4>
+                <p>54 files</p>
+              </div>
+            </div>
+            <p className="file-size">86MB</p>
+          </div>
+          <div className="other storage-info">
+            <div className="storage-info-header-wrapper">
+              <i className="fa-solid fa-file-zipper"></i>
+              <div className="storage-info-header">
+                <h4>Other Files</h4>
+                <p>54 files</p>
+              </div>
+            </div>
+            <p className="file-size">86MB</p>
+          </div>
+        </div>
       </div>
     </>
   );

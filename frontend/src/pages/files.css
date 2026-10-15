@@ -1,3 +1,27 @@
 .files {
+	display: flex;
+	align-items: flex-start;
+	height: calc(100%-60px);
+	overflow: auto;
+	background: var(--bg);
+	border-radius: 15px;
+	height: calc(100% - 50px);
+	padding-bottom: 5px;
+	flex: 1;
+}
+
+.files-section {
+	flex: 1;
+	min-width: 408px;
 	padding: 15px;
+	padding-right: 25px;
+	height: calc(100% - 30px);
+	overflow-x: auto;
+}
+
+.files-sidebar {
+	width: 250px;
+	flex-shrink: 0;
+	height: inherit;
+	display: flex;
 }

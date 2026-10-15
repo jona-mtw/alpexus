@@ -1,20 +1,61 @@
 .dashboard {
 	display: flex;
 	align-items: flex-start;
-	height: 100%;
 	overflow: auto;
 	background: var(--bg);
 	border-radius: 15px;
 	height: calc(100% - 50px);
 	padding-bottom: 5px;
+	flex: 1;
 }
 
 .dashboard-info {
 	flex: 1;
 	min-width: 408px;
 	padding: 15px;
+	padding-right: 25px;
 	height: calc(100% - 30px);
 	overflow-x: auto;
+}
+
+.dashboard-top-row {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.search-bar-wrapper {
+	width: 100%;
+	display: flex;
+	justify-content: end;
+	align-items: center;
+}
+
+.search-bar {
+	display: flex;
+	align-items: center;
+	background: var(--panel-bg);
+	padding: 15px;
+	width: 300px;
+	border-radius: 30px;
+	i {
+		color: #afbfff;
+	}
+}
+
+.search-input {
+	flex: 1;
+	background: transparent;
+	border: none;
+	color: #afbfff;
+	font: "Clarity City";
+	margin-right: 15px;
+	font-size: 20px;
+}
+
+.search-input:focus-within{
+	border: none;
+	outline: none;
 }
 
 .dashboard-sidebar {
@@ -50,4 +91,3 @@
 		color: var(--bg);
 	}
 }
-

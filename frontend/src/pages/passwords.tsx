@@ -3,7 +3,9 @@ import "./passwords.css";
 function Passwords() {
   return (
     <>
-      <h1>Passwords</h1>
+      <div className="passwords">
+        <h1>Passwords</h1>
+      </div>
     </>
   );
 }

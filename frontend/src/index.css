@@ -8,7 +8,7 @@
   --header-size: 30px;
   --text-size: 15px;
   --border-color: #4f5761;
-  background: var(--bg);
+  background: var(--panel-bg);
 }
 
 html, body, #root {
@@ -17,13 +17,18 @@ html, body, #root {
   padding: 0;
 }
 
-h1, h2, h3, h4, p, a, span {
+h1, h2, h3, h4, p, a, span, i {
   color: var(--text);
   font-family: var(--text-font-family);
   cursor: default;
   padding: 0;
   margin: 0;
   font-size: var(--text-size);
+}
+
+i {
+  margin: 0px;
+  padding: 0px;
 }
 
 a, span {

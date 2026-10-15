@@ -16,14 +16,24 @@ function RecentActivityPanel(props: { title: string; description: string; date: 
 function Home() {
   const Activities = [];
   for (let i: number = 1; i < 6; i++) {
-    Activities.push(<RecentActivityPanel title={`Recent Activity ` + i} description="Lorem ipsum dolor sit amet consectetur adipisicing elit." date="10-10-2026" image="hello" />);
+    Activities.push(<RecentActivityPanel title={`Recent Activity ` + i} description="Lorem ipsum dolor sit amet consectetur adipisicing elit. " date="10-10-2026" image="hello" />);
   }
   return (
     <>
       <div className="dashboard">
         <div className="dashboard-info">
-          <h1>Dashboard</h1>
-          <h1 className="title">Hello Jonny!</h1>
+          <div className="dashboard-top-row">
+            <div className="top-row-column">
+              <h1>Dashboard</h1>
+              <h1 className="title">Hello Jonny!</h1>
+            </div>
+            <div className="search-bar-wrapper">
+              <div className="search-bar">
+                <input placeholder="Search" className="search-input" />
+                <i className="fa-solid fa-magnifying-glass search-icon"></i>
+              </div>
+            </div>
+          </div>
           <div className="recent-activity panel">
             <h2>Recent Acitivity</h2>
             <div className="recent-activity-list">{Activities}</div>

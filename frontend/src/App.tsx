@@ -58,9 +58,9 @@ function App() {
           <p className="nav-bar-text">settings</p>
         </span>
       </nav>
-      <div className="main-content">
+      <main>
         <ActivePage />
-      </div>
+      </main>
     </div>
   );
 }

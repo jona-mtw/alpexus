@@ -3,7 +3,9 @@ import "./media.css";
 function Media() {
   return (
     <>
-      <h1>Media</h1>
+      <div className="media">
+        <h1>Media</h1>
+      </div>
     </>
   );
 }

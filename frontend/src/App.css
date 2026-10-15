@@ -21,10 +21,6 @@
 		width: 220px;
 }
 
-i {
-	padding-top: 20px;
-}
-
 .nav-bar-text {
 	margin: 0;
 }
@@ -61,6 +57,9 @@ h1 {
 
 .nav-bar-link {
     padding-top: 20px;
+		i {
+			padding-top: 20px;
+		}
 }
 
 #nav-bar-settings {
@@ -72,7 +71,7 @@ h1 {
 	width: calc(100% - 75px);
 }
 
-.main-content {
+main {
 	margin-left: 220px;
 	width: calc(100% - 225px);
 	box-sizing: border-box;
