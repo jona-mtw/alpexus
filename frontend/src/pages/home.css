@@ -31,33 +31,6 @@
 	align-items: center;
 }
 
-.search-bar {
-	display: flex;
-	align-items: center;
-	background: var(--panel-bg);
-	padding: 15px;
-	width: 300px;
-	border-radius: 30px;
-	i {
-		color: #afbfff;
-	}
-}
-
-.search-input {
-	flex: 1;
-	background: transparent;
-	border: none;
-	color: #afbfff;
-	font: "Clarity City";
-	margin-right: 15px;
-	font-size: 20px;
-}
-
-.search-input:focus-within{
-	border: none;
-	outline: none;
-}
-
 .dashboard-sidebar {
 	width: 250px;
 	flex-shrink: 0;

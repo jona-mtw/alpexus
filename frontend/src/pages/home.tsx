@@ -1,5 +1,6 @@
 import "./home.css";
 import StorageContainer from "./components/storage-panel.tsx";
+import SearchBar from "./components/search-bar.tsx";
 
 function RecentActivityPanel(props: { title: string; description: string; date: string; image: string }) {
   return (
@@ -28,10 +29,7 @@ function Home() {
               <h1 className="title">Hello Jonny!</h1>
             </div>
             <div className="search-bar-wrapper">
-              <div className="search-bar">
-                <input placeholder="Search" className="search-input" />
-                <i className="fa-solid fa-magnifying-glass search-icon"></i>
-              </div>
+              <SearchBar />
             </div>
           </div>
           <div className="recent-activity panel">
