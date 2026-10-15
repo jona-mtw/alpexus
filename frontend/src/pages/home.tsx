@@ -1,6 +1,7 @@
 import "./home.css";
 import StorageContainer from "./components/storage-panel.tsx";
 import SearchBar from "./components/search-bar.tsx";
+import File from "./components/file.tsx";
 
 function RecentActivityPanel(props: { title: string; description: string; date: string; image: string }) {
   return (
@@ -17,7 +18,7 @@ function RecentActivityPanel(props: { title: string; description: string; date: 
 function Home() {
   const QuickFiles = [];
   for (let i: number = 0; i < 5; i++) {
-    QuickFiles.push();
+    QuickFiles.push(<File name="hello" fileType="tsx" size={5} date="14-10-2026" />);
   }
 
   const Activities = [];
@@ -43,6 +44,7 @@ function Home() {
                 <i className="fa-solid fa-folder-open fa-xl"></i>
                 <h2>Files</h2>
               </div>
+              <div className="quick-access-files-list">{QuickFiles}</div>
             </div>
             <div className="notes-quick-access panel">
               <div className="panel-header">
