@@ -1,6 +1,6 @@
 .individual-file {
 	display: flex;
-	margin: 10px;
+	margin-bottom: 10px;
 	background: var(--bg);
 	border-radius: 15px;
 	padding: 7px;
