@@ -21,6 +21,11 @@ function Home() {
     QuickFiles.push(<File name="hello" fileType="tsx" size={5} date="14-10-2026" />);
   }
 
+  const QuickNotes = [];
+  for (let i: number = 0; i < 5; i++) {
+    QuickNotes.push(<File name="hello" fileType="tsx" size={5} date="14-10-2026" />);
+  }
+
   const Activities = [];
   for (let i: number = 1; i < 6; i++) {
     Activities.push(<RecentActivityPanel title={`Recent Activity ` + i} description="Lorem ipsum dolor sit amet consectetur adipisicing elit. " date="10-10-2026" image="hello" />);
@@ -51,6 +56,7 @@ function Home() {
                 <i className="fa-solid fa-note-sticky fa-xl"></i>
                 <h2>Notes</h2>
               </div>
+              <div className="quick-access-notes-list">{QuickNotes}</div>
             </div>
           </div>
           <div className="recent-activity panel">

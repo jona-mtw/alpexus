@@ -92,7 +92,7 @@
 	}
 }
 
-.quick-access-files-list {
+.quick-access-files-list, .quick-access-notes-list {
 	flex: 1;
 	min-height: 0;
 	overflow-y: auto;

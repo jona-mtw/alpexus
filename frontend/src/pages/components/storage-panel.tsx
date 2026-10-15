@@ -20,7 +20,7 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="file-size">86MB</p>
+            <p className="storage-size">86MB</p>
           </div>
           <div className="documents storage-info">
             <div className="storage-info-header-wrapper">
@@ -30,7 +30,7 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="file-size">86MB</p>
+            <p className="storage-size">86MB</p>
           </div>
           <div className="media storage-info">
             <div className="storage-info-header-wrapper">
@@ -40,7 +40,7 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="file-size">86MB</p>
+            <p className="storage-size">86MB</p>
           </div>
           <div className="other storage-info">
             <div className="storage-info-header-wrapper">
@@ -50,7 +50,7 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="file-size">86MB</p>
+            <p className="storage-size">86MB</p>
           </div>
         </div>
       </div>
