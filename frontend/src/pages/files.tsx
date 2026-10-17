@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./files.css";
 import StorageContainer from "./components/storage-panel.tsx";
 
@@ -12,17 +13,34 @@ type FileItem = {
   starred: boolean;
 };
 
+type DirectoryEntry = {
+  name: string;
+  type: "file" | "folder";
+};
+
 function Files() {
-  const files: FileItem[] = [
-    { id: "f1", name: "Pictures", type: "folder", fileType: null, parentId: null, size: 500, modified: "2/2/26", starred: true },
-    { id: "f2", name: "Videos", type: "folder", fileType: null, parentId: null, size: 500, modified: "2/2/26", starred: true },
-  ];
+  const [files, setFiles] = useState<DirectoryEntry[]>([]);
+  useEffect(() => {
+    fetch("http://localhost:3000/api/files?path=86")
+      .then((response) => response.json())
+      .then((data) => {
+        setFiles(data);
+      });
+  });
+
   return (
     <>
       <div className="files">
         <div className="files-section">
           <h1>Files</h1>
-          <div className="file-manager"></div>
+          <div className="files-quick-access"></div>
+          <div className="file-manager">
+            {files.map((file) => (
+              <div key={file.name}>
+                {file.type === "folder" ? "📁" : "📄"} {file.name}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <div className="files-sidebar">

@@ -15,20 +15,36 @@ function RecentActivityPanel(props: { title: string; description: string; date: 
   );
 }
 
+function Note(props: { name: string; description: string; date: string }) {
+  return (
+    <>
+      <div className="individual-file">
+        <div className="individual-file-left-wrapper">
+          <p className="file-name">{props.name}</p>
+          <div className="individual-file-left-wrapper-bottom">
+            <p className="file-type">{props.description}</p>
+          </div>
+        </div>
+        <p className="file-date">{props.date}</p>
+      </div>
+    </>
+  );
+}
+
 function Home() {
   const QuickFiles = [];
   for (let i: number = 0; i < 5; i++) {
-    QuickFiles.push(<File name="hello" fileType="tsx" size={5} date="14-10-2026" />);
+    QuickFiles.push(<File key={i} name="hello" fileType="tsx" size={5} date="14-10-2026" />);
   }
 
   const QuickNotes = [];
   for (let i: number = 0; i < 5; i++) {
-    QuickNotes.push(<File name="hello" fileType="tsx" size={5} date="14-10-2026" />);
+    QuickNotes.push(<Note key={i} name="hello" description="hellooooooo..." date="14-10-2026" />);
   }
 
   const Activities = [];
   for (let i: number = 1; i < 6; i++) {
-    Activities.push(<RecentActivityPanel title={`Recent Activity ` + i} description="Lorem ipsum dolor sit amet consectetur adipisicing elit. " date="10-10-2026" image="hello" />);
+    Activities.push(<RecentActivityPanel key={i} title={`Recent Activity ` + i} description="Lorem ipsum dolor sit amet consectetur adipisicing elit. " date="10-10-2026" image="hello" />);
   }
   return (
     <>
