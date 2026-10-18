@@ -13,7 +13,7 @@ type DirectoryEntry = {
 };
 
 function Files() {
-  const [filePath, setFilePath] = useState("86/anime_only/");
+  const [filePath, setFilePath] = useState("86/");
   const [files, setFiles] = useState<DirectoryEntry[]>([]);
   useEffect(() => {
     fetch(`http://localhost:3000/api/files?path=${encodeURIComponent(filePath)}`)
@@ -41,9 +41,12 @@ function Files() {
           <div className="files-quick-access"></div>
           <div className="file-manager">
             {files.map((file) => (
-              <div className={file.name} key={file.name}>
-                <p>{`${file.type}: ${file.name}`}</p>
-              </div>
+              <File
+                name={file.name}
+                fileType={file.fileType}
+                size={file.size}
+                date={new Date(file.dateModified).toLocaleDateString()}
+              />
             ))}
           </div>
         </div>

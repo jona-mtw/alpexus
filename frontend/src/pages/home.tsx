@@ -3,7 +3,12 @@ import StorageContainer from "./components/storage-panel.tsx";
 import SearchBar from "./components/search-bar.tsx";
 import File from "./components/file.tsx";
 
-function RecentActivityPanel(props: { title: string; description: string; date: string; image: string }) {
+function RecentActivityPanel(props: {
+  title: string;
+  description: string;
+  date: string;
+  image: string;
+}) {
   return (
     <>
       <div className="recent-activity-panel">
@@ -18,7 +23,7 @@ function RecentActivityPanel(props: { title: string; description: string; date: 
 function Note(props: { name: string; description: string; date: string }) {
   return (
     <>
-      <div className="individual-file">
+      <div className="individual-file with-bg">
         <div className="individual-file-left-wrapper">
           <p className="file-name">{props.name}</p>
           <div className="individual-file-left-wrapper-bottom">
@@ -34,7 +39,9 @@ function Note(props: { name: string; description: string; date: string }) {
 function Home() {
   const QuickFiles = [];
   for (let i: number = 0; i < 5; i++) {
-    QuickFiles.push(<File key={i} name="hello" fileType="tsx" size={5} date="14-10-2026" />);
+    QuickFiles.push(
+      <File key={i} name="hello" fileType="tsx" size={5} date="14-10-2026" bg={false} />,
+    );
   }
 
   const QuickNotes = [];
@@ -44,7 +51,15 @@ function Home() {
 
   const Activities = [];
   for (let i: number = 1; i < 6; i++) {
-    Activities.push(<RecentActivityPanel key={i} title={`Recent Activity ` + i} description="Lorem ipsum dolor sit amet consectetur adipisicing elit. " date="10-10-2026" image="hello" />);
+    Activities.push(
+      <RecentActivityPanel
+        key={i}
+        title={`Recent Activity ` + i}
+        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. "
+        date="10-10-2026"
+        image="hello"
+      />,
+    );
   }
   return (
     <>

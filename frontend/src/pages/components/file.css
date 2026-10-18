@@ -1,28 +1,42 @@
 .individual-file {
+	background: var(--panel-bg);
 	display: flex;
 	margin-bottom: 10px;
-	background: var(--bg);
 	border-radius: 15px;
 	padding: 7px;
 	padding-left: 10px;
 	padding-right: 10px;
+  min-width: 0;
+}
+
+.with-bg {
+	background: var(--bg);
 }
 
 .individual-file-left-wrapper {
 	flex-direction: column;
+  flex: 1;
+  min-width: 0;
 }
 
 .individual-file-left-wrapper-bottom {
-	display: flex;
-	gap: 5px;
+  display: flex;
+  gap: 5px;
+	width: 0;
+}
+
+.is-folder{
+	visibility: hidden;
 }
 
 .file-name, .file-size, .file-type, .file-date {
-	flex: 1;
 	font-size: 13px;
 }
 
 .file-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 	font-size: 17px;
 }
 
@@ -30,4 +44,8 @@
 	display: flex;
 	justify-content: end;
 	align-items: center;
+}
+
+.file-size, .file-type {
+  flex-shrink: 0;
 }
