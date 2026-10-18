@@ -31,7 +31,7 @@ async function getDirectoryContents(relativePath: string, pathString: string): P
 		const stats = await fs.stat(path.join(pathString, child.name));
 		outputFileDir.push({
 			path: path.join(relativePath, child.name),
-			name: child.name, 
+			name: path.parse(child.name).name, 
 			type: child.isDirectory() ? "folder" : "file", 
 			dateModified: stats.mtime, 
 			size: stats.size, 
