@@ -1,30 +1,27 @@
 import { useEffect, useState } from "react";
 import "./files.css";
+import File from "./components/file.tsx";
 import StorageContainer from "./components/storage-panel.tsx";
 
-type FileItem = {
-  id: string;
-  name: string;
-  type: string;
-  fileType: string | null;
-  parentId: string | null;
-  size: number;
-  modified: string;
-  starred: boolean;
-};
-
 type DirectoryEntry = {
+  path: string;
   name: string;
   type: "file" | "folder";
+  dateModified: string;
+  size: number;
+  fileType: string;
 };
 
 function Files() {
+  const [filePath, setFilePath] = useState("86/anime_only/");
   const [files, setFiles] = useState<DirectoryEntry[]>([]);
   useEffect(() => {
-    fetch("http://localhost:3000/api/files?path=86/")
+    fetch(`http://localhost:3000/api/files?path=${encodeURIComponent(filePath)}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch files!");
+        } else {
+          console.log("Files fetched");
         }
         return response.json();
       })
@@ -34,7 +31,7 @@ function Files() {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [filePath]);
 
   return (
     <>
@@ -45,7 +42,7 @@ function Files() {
           <div className="file-manager">
             {files.map((file) => (
               <div className={file.name} key={file.name}>
-                <p>{file.name}</p>
+                <p>{`${file.type}: ${file.name}`}</p>
               </div>
             ))}
           </div>

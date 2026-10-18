@@ -11,11 +11,15 @@ const PORT = 3000;
 const STORAGE = path.resolve("storage");
 
 type FileEntry = {
+	path: string,
 	name: string,
-	type: "file" | "folder"
+	type: "file" | "folder",
+	dateModified: Date,
+	size: number,
+	fileType: string
 };
 
-async function getDirectoryContents(pathString: string): Promise<FileEntry[]> {
+async function getDirectoryContents(relativePath: string, pathString: string): Promise<FileEntry[]> {
 	const children = await fs.readdir(pathString, {withFileTypes: true})
 
 	let folderCounter: number = 0;
@@ -23,15 +27,17 @@ async function getDirectoryContents(pathString: string): Promise<FileEntry[]> {
 	
 	const outputFileDir: FileEntry[] = [];
 
-	children.forEach((child) => {
-		if (child.isDirectory()) {
-			folderCounter ++;
-			outputFileDir.push({name: child.name, type: "folder"})
-		} else if (child.isFile()) {
-			fileCounter ++;
-			outputFileDir.push({name: child.name, type: "file"})
-		}
-	})
+	for (const child of children) {
+		const stats = await fs.stat(path.join(pathString, child.name));
+		outputFileDir.push({
+			path: path.join(relativePath, child.name),
+			name: child.name, 
+			type: child.isDirectory() ? "folder" : "file", 
+			dateModified: stats.mtime, 
+			size: stats.size, 
+			fileType: path.extname(child.name).toLowerCase().slice(1)
+		})
+	}
 
 	return outputFileDir;
 }
@@ -46,7 +52,8 @@ app.get("/api/files", async (req, res) => {
 		return;
 	}
 	try {
-		const result = await getDirectoryContents(targetPath);
+		const result = await getDirectoryContents(relativePath, targetPath);
+		console.log(result);
 		res.json(result);
 	} catch {
 		res.status(404).json({ error: "Directory not found" });
