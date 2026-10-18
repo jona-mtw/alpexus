@@ -21,12 +21,20 @@ type DirectoryEntry = {
 function Files() {
   const [files, setFiles] = useState<DirectoryEntry[]>([]);
   useEffect(() => {
-    fetch("http://localhost:3000/api/files?path=86")
-      .then((response) => response.json())
+    fetch("http://localhost:3000/api/files?path=86/")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch files!");
+        }
+        return response.json();
+      })
       .then((data) => {
         setFiles(data);
+      })
+      .catch((error) => {
+        console.error(error);
       });
-  });
+  }, []);
 
   return (
     <>
@@ -36,8 +44,8 @@ function Files() {
           <div className="files-quick-access"></div>
           <div className="file-manager">
             {files.map((file) => (
-              <div key={file.name}>
-                {file.type === "folder" ? "📁" : "📄"} {file.name}
+              <div className={file.name} key={file.name}>
+                <p>{file.name}</p>
               </div>
             ))}
           </div>

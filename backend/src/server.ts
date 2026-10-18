@@ -45,9 +45,12 @@ app.get("/api/files", async (req, res) => {
 		res.status(403).json({ error: "Access Denied" });
 		return;
 	}
-
-	const result = await getDirectoryContents(targetPath);
-	res.json(result);
+	try {
+		const result = await getDirectoryContents(targetPath);
+		res.json(result);
+	} catch {
+		res.status(404).json({ error: "Directory not found" });
+	}
 
 });
 
