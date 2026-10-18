@@ -1,11 +1,20 @@
 import "./file.css";
 
-function File(props: { name: string; fileType: string; size: number; date: string; bg?: boolean }) {
+type FileProps = {
+  name: string;
+  fileType: string;
+  size: number;
+  date: string;
+  bg?: boolean;
+  onClick?: () => void;
+};
+
+function File(props: FileProps) {
   const { bg = true } = props;
 
   return (
     <>
-      <div className={!bg ? "individual-file with-bg" : "individual-file"}>
+      <div className={!bg ? "individual-file with-bg" : "individual-file"} onClick={props.onClick}>
         <div className="individual-file-left-wrapper">
           <p className="file-name">{props.name}</p>
           <div

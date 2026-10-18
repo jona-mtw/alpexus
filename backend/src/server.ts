@@ -21,9 +21,6 @@ type FileEntry = {
 
 async function getDirectoryContents(relativePath: string, pathString: string): Promise<FileEntry[]> {
 	const children = await fs.readdir(pathString, {withFileTypes: true})
-
-	let folderCounter: number = 0;
-	let fileCounter: number = 0;
 	
 	const outputFileDir: FileEntry[] = [];
 

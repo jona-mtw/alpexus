@@ -13,7 +13,7 @@ type DirectoryEntry = {
 };
 
 function Files() {
-  const [filePath, setFilePath] = useState("86/");
+  const [filePath, setFilePath] = useState("./");
   const [files, setFiles] = useState<DirectoryEntry[]>([]);
   useEffect(() => {
     fetch(`http://localhost:3000/api/files?path=${encodeURIComponent(filePath)}`)
@@ -42,10 +42,16 @@ function Files() {
           <div className="file-manager">
             {files.map((file) => (
               <File
+                key={file.path + file.name}
                 name={file.name}
                 fileType={file.fileType}
                 size={file.size}
                 date={new Date(file.dateModified).toLocaleDateString()}
+                onClick={() => {
+                  if (file.type == "folder") {
+                    setFilePath(file.path);
+                  }
+                }}
               />
             ))}
           </div>
