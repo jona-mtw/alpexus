@@ -40,7 +40,15 @@ function Home() {
   const QuickFiles = [];
   for (let i: number = 0; i < 5; i++) {
     QuickFiles.push(
-      <File key={i} name="hello" fileType="tsx" size={5} date="14-10-2026" bg={false} />,
+      <File
+        key={i}
+        name="hello"
+        type="file"
+        fileType="tsx"
+        size={5}
+        date="14-10-2026"
+        bg={false}
+      />,
     );
   }
 

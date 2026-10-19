@@ -19,6 +19,22 @@ type FileEntry = {
 	fileType: string
 };
 
+async function getFileSize(folderPath: string): Promise<number> {
+	const children = await fs.readdir(folderPath, {withFileTypes: true});
+	let totalSize = 0;
+
+	for (const child of children) {
+		const childPath = path.join(folderPath, child.name);
+		if (child.isDirectory()) {totalSize += await getFileSize(childPath)}
+		else if (child.isFile()) {
+			const stats = await fs.stat(childPath);
+			totalSize += stats.size;
+		}
+	}
+
+	return totalSize
+}
+
 async function getDirectoryContents(relativePath: string, pathString: string): Promise<FileEntry[]> {
 	const children = await fs.readdir(pathString, {withFileTypes: true})
 	
@@ -31,7 +47,7 @@ async function getDirectoryContents(relativePath: string, pathString: string): P
 			name: path.parse(child.name).name, 
 			type: child.isDirectory() ? "folder" : "file", 
 			dateModified: stats.mtime, 
-			size: stats.size, 
+			size: child.isDirectory() ? await getFileSize(path.join(pathString, child.name)) : stats.size, 
 			fileType: path.extname(child.name).toLowerCase().slice(1)
 		})
 	}
@@ -57,6 +73,7 @@ app.get("/api/files", async (req, res) => {
 	}
 
 });
+
 
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);

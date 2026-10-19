@@ -55,6 +55,7 @@ function Files() {
               <File
                 key={file.path + file.name}
                 name={file.name}
+                type={file.type}
                 fileType={file.fileType}
                 size={file.size}
                 date={file.dateModified}
