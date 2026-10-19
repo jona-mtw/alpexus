@@ -25,3 +25,11 @@
 	height: inherit;
 	display: flex;
 }
+
+.path-header {
+	display: flex;
+	flex-direction: row;
+	gap: 15px;
+	margin: 5px;
+	padding: 15px;
+}

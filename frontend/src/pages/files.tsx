@@ -48,8 +48,25 @@ function Files() {
           <div className="files-quick-access"></div>
           <div className="file-manager">
             <div className="path-header">
+              <h2
+                onClick={() => {
+                  setFilePath("");
+                }}
+              >
+                Storage
+              </h2>
               {splitFilePath.map((folderPath) => (
-                <p>{folderPath}</p>
+                <>
+                  <h2 key={folderPath + "chevron"}>{">"}</h2>
+                  <h2
+                    key={folderPath}
+                    onClick={() => {
+                      setFilePath(folderPath);
+                    }}
+                  >
+                    {folderPath}
+                  </h2>
+                </>
               ))}
             </div>
             {files.map((file) => (
