@@ -31,6 +31,7 @@
 	flex-direction: row;
 	gap: 15px;
 	padding: 15px 0 15px 0;
+	height: 2em;
 	h2 {
 		text-overflow: ellipsis;
 		overflow: hidden;

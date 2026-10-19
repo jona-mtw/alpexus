@@ -10,6 +10,21 @@ type FileProps = {
   onClick?: () => void;
 };
 
+function formatSize(sizeBytes: number): string {
+  let units = ["B", "KB", "MB", "GB"];
+  let outputUnit: string = "B";
+
+  for (const unit of units) {
+    if (sizeBytes < 1000) {
+      outputUnit = unit;
+      break;
+    }
+    outputUnit = unit;
+    sizeBytes /= 1000;
+  }
+  return `${sizeBytes.toFixed(1)}${outputUnit}`;
+}
+
 function File(props: FileProps) {
   const { bg = true } = props;
 
@@ -19,7 +34,7 @@ function File(props: FileProps) {
         <div className="individual-file-left-wrapper">
           <p className="file-name">{props.name}</p>
           <div className="individual-file-left-wrapper-bottom">
-            <p className="file-size">{(props.size / 1000000).toFixed(1) + "MB"}</p>
+            <p className="file-size">{formatSize(props.size)}</p>
             <p className={props.type == "folder" ? "is-folder" : ""}>·</p>
             <p className={props.type == "folder" ? "file-type is-folder" : "file-type"}>
               {props.fileType}

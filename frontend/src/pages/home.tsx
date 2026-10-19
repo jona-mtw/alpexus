@@ -69,6 +69,7 @@ function Home() {
       />,
     );
   }
+
   return (
     <>
       <div className="dashboard">

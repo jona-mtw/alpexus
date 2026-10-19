@@ -60,7 +60,7 @@ app.get("/api/files", async (req, res) => {
 	const targetPath = path.resolve(STORAGE, requestedPath);
 	const relativePath = path.relative(STORAGE, targetPath)
 
-	if (relativePath === ".." || relativePath.startsWith(`..${path.sep}`)){
+	if (!(relativePath === "../storage") && (relativePath === ".." || relativePath.startsWith(`..${path.sep}`))){
 		res.status(403).json({ error: "Access Denied" });
 		return;
 	}

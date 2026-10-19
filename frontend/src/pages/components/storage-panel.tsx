@@ -1,14 +1,59 @@
+import { useEffect, useState } from "react";
 import "./storage-panel.css";
 
+type DirectoryEntry = {
+  path: string;
+  name: string;
+  type: "file" | "folder";
+  dateModified: string;
+  size: number;
+  fileType: string;
+};
+
+function formatSize(sizeBytes: number): string {
+  let units = ["B", "KB", "MB", "GB"];
+  let outputUnit: string = "B";
+
+  for (const unit of units) {
+    if (sizeBytes < 1000) {
+      outputUnit = unit;
+      break;
+    }
+    outputUnit = unit;
+    sizeBytes /= 1000;
+  }
+  return `${sizeBytes.toFixed(1)}${outputUnit}`;
+}
+
 function StorageContainer() {
+  const capacity = 0.5 * 1000 ** 3;
+  const [totalSize, setTotalSize] = useState(0);
+  useEffect(() => {
+    async function fetchStorageSize() {
+      const response = await fetch(`http://localhost:3000/api/files?path=`);
+      const files = await response.json();
+      console.log(files);
+      setTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
+    }
+
+    fetchStorageSize();
+  }, []);
   return (
     <>
       <div className="storage-container">
         <h2>Storage</h2>
-        <div className="storage-gauge">
+        <div
+          className="storage-gauge"
+          style={{
+            background: `conic-gradient(
+              #7765E3 0% ${(totalSize / capacity) * 100}%,
+              #30364B ${(totalSize / capacity) * 100}% 100%
+            )`,
+          }}
+        >
           <div className="gauge">
-            <h4>9.4GB</h4>
-            <p>of 15GB capacity</p>
+            <h4>{formatSize(totalSize)}</h4>
+            <p>of {formatSize(capacity)} capacity</p>
           </div>
         </div>
         <div className="storage-detailed-info">

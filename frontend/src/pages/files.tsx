@@ -18,10 +18,10 @@ function Files() {
   useEffect(() => {
     fetch(`http://localhost:3000/api/files?path=${encodeURIComponent(filePath)}`)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch files!");
-        } else {
+        if (response.ok) {
           console.log("Files fetched");
+        } else {
+          throw new Error("Failed to fetch files");
         }
         return response.json();
       })
@@ -36,7 +36,6 @@ function Files() {
       <div className="files">
         <div className="files-section">
           <h1>Files</h1>
-          {/* <div className="files-quick-access"></div> */}
           <div className="file-manager">
             <div className="path-header">
               <h2 onClick={() => setFilePath("")}>Storage</h2>
