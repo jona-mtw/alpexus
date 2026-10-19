@@ -29,7 +29,13 @@ function File(props: FileProps) {
             <p className="file-type">{props.fileType}</p>
           </div>
         </div>
-        <p className="file-date">{props.date}</p>
+        <p className="file-date">
+          {new Date(props.date).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })}
+        </p>
       </div>
     </>
   );

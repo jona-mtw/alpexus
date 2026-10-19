@@ -13,7 +13,7 @@ type DirectoryEntry = {
 };
 
 function Files() {
-  const [filePath, setFilePath] = useState("./");
+  const [filePath, setFilePath] = useState("");
   const [files, setFiles] = useState<DirectoryEntry[]>([]);
   useEffect(() => {
     fetch(`http://localhost:3000/api/files?path=${encodeURIComponent(filePath)}`)
@@ -33,6 +33,13 @@ function Files() {
       });
   }, [filePath]);
 
+  const [splitFilePath, setSplitFilePath] = useState<string[]>([]);
+
+  useEffect(() => {
+    setSplitFilePath(filePath.split("\\"));
+    console.log(splitFilePath);
+  }, [filePath]);
+
   return (
     <>
       <div className="files">
@@ -40,13 +47,18 @@ function Files() {
           <h1>Files</h1>
           <div className="files-quick-access"></div>
           <div className="file-manager">
+            <div className="path-header">
+              {splitFilePath.map((folderPath) => (
+                <p>{folderPath}</p>
+              ))}
+            </div>
             {files.map((file) => (
               <File
                 key={file.path + file.name}
                 name={file.name}
                 fileType={file.fileType}
                 size={file.size}
-                date={new Date(file.dateModified).toLocaleDateString()}
+                date={file.dateModified}
                 onClick={() => {
                   if (file.type == "folder") {
                     setFilePath(file.path);
