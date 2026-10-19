@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import "./files.css";
 import File from "./components/file.tsx";
 import StorageContainer from "./components/storage-panel.tsx";
@@ -25,12 +25,8 @@ function Files() {
         }
         return response.json();
       })
-      .then((data) => {
-        setFiles(data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      .then((data) => setFiles(data))
+      .catch((error) => console.error(error));
   }, [filePath]);
 
   const [splitFilePath, setSplitFilePath] = useState<string[]>([]);
@@ -45,25 +41,14 @@ function Files() {
       <div className="files">
         <div className="files-section">
           <h1>Files</h1>
-          <div className="files-quick-access"></div>
+          {/* <div className="files-quick-access"></div> */}
           <div className="file-manager">
             <div className="path-header">
-              <h2
-                onClick={() => {
-                  setFilePath("");
-                }}
-              >
-                Storage
-              </h2>
+              <h2 onClick={() => setFilePath("")}>Storage</h2>
               {splitFilePath.map((folderPath) => (
                 <>
                   <h2 key={folderPath + "chevron"}>{">"}</h2>
-                  <h2
-                    key={folderPath}
-                    onClick={() => {
-                      setFilePath(folderPath);
-                    }}
-                  >
+                  <h2 key={folderPath} onClick={() => setFilePath(folderPath)}>
                     {folderPath}
                   </h2>
                 </>
