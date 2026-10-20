@@ -14,7 +14,8 @@
 }
 
 .individual-file-left-wrapper {
-	flex-direction: column;
+	display: flex;
+	flex-direction: row;
   flex: 1;
   min-width: 0;
 }
@@ -48,4 +49,15 @@
 
 .file-size, .file-type {
   flex-shrink: 0;
+}
+
+.file-icon {
+	display: flex;
+	align-items: center;
+	margin: 15px 15px 15px 5px;
+}
+
+.vertical-wrapper {
+	display: flex;
+	flex-direction: column;
 }

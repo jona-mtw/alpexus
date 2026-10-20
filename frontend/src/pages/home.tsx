@@ -1,5 +1,4 @@
 import "./home.css";
-import StorageContainer from "./components/storage-panel.tsx";
 import SearchBar from "./components/search-bar.tsx";
 import File from "./components/file.tsx";
 
@@ -105,9 +104,6 @@ function Home() {
           </div>
         </div>
       </div>
-      <aside className="dashboard-sidebar">
-        <StorageContainer />
-      </aside>
     </>
   );
 }

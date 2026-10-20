@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import "./files.css";
 import File from "./components/file.tsx";
-import StorageContainer from "./components/storage-panel.tsx";
 
 type DirectoryEntry = {
   path: string;
@@ -41,7 +40,6 @@ function Files() {
               <h2 onClick={() => setFilePath("")}>Storage</h2>
               {splitFilePath.map((folderPath, index) => {
                 const fullPath = splitFilePath.slice(0, index + 1).join("\\");
-
                 return (
                   <Fragment key={fullPath}>
                     <h2>{">"}</h2>
@@ -67,9 +65,6 @@ function Files() {
             ))}
           </div>
         </div>
-      </div>
-      <div className="files-sidebar">
-        <StorageContainer />
       </div>
     </>
   );

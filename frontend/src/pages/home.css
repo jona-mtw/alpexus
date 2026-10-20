@@ -31,13 +31,6 @@
 	align-items: center;
 }
 
-.dashboard-sidebar {
-	width: 250px;
-	flex-shrink: 0;
-	height: inherit;
-	display: flex;
-}
-
 .recent-activity {
 	margin-top: 20px;
 }

@@ -10,6 +10,36 @@ type FileProps = {
   onClick?: () => void;
 };
 
+const fileIcons = {
+  folder: <i className="fa-solid fa-folder-open"></i>,
+  pdf: <i className="fa-solid fa-file-pdf"></i>,
+  img: <i className="fa-solid fa-file-image"></i>,
+  video: <i className="fa-solid fa-file-video"></i>,
+  audio: <i className="fa-solid fa-file-audio"></i>,
+  word: <i className="fa-solid fa-file-word"></i>,
+  excel: <i className="fa-solid fa-file-excel"></i>,
+  powerpoint: <i className="fa-solid fa-file-powerpoint"></i>,
+  zip: <i className="fa-solid fa-file-zipper"></i>,
+  code: <i className="fa-solid fa-file-code"></i>,
+  otherFile: <i className="fa-solid fa-file"></i>,
+};
+
+function getIcon(file: FileProps) {
+  if (file.type == "folder") {
+    return fileIcons.folder;
+  } else {
+    if (file.fileType == "pdf") {
+      return fileIcons.pdf;
+    } else if (file.fileType == "docx") {
+      return fileIcons.word;
+    } else if (file.fileType == "pptx") {
+      return fileIcons.powerpoint;
+    } else {
+      return fileIcons.otherFile;
+    }
+  }
+}
+
 function formatSize(sizeBytes: number): string {
   let units = ["B", "KB", "MB", "GB"];
   let outputUnit: string = "B";
@@ -32,13 +62,22 @@ function File(props: FileProps) {
     <>
       <div className={!bg ? "individual-file with-bg" : "individual-file"} onClick={props.onClick}>
         <div className="individual-file-left-wrapper">
-          <p className="file-name">{props.name}</p>
-          <div className="individual-file-left-wrapper-bottom">
-            <p className="file-size">{formatSize(props.size)}</p>
-            <p className={props.type == "folder" ? "is-folder" : ""}>·</p>
-            <p className={props.type == "folder" ? "file-type is-folder" : "file-type"}>
-              {props.fileType}
-            </p>
+          <div className="file-icon">{getIcon(props)}</div>
+          <div className="vertical-wrapper">
+            <p className="file-name">{props.name}</p>
+            <div className="individual-file-left-wrapper-bottom">
+              <p className="file-size">{formatSize(props.size)}</p>
+              <p className={props.type == "folder" || props.fileType == "" ? "is-folder" : ""}>·</p>
+              <p
+                className={
+                  props.type == "folder" || props.fileType == ""
+                    ? "file-type is-folder"
+                    : "file-type"
+                }
+              >
+                {props.fileType}
+              </p>
+            </div>
           </div>
         </div>
         <p className="file-date">

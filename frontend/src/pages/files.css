@@ -19,13 +19,6 @@
 	overflow-x: auto;
 }
 
-.files-sidebar {
-	width: 250px;
-	flex-shrink: 0;
-	height: inherit;
-	display: flex;
-}
-
 .path-header {
 	display: flex;
 	flex-direction: row;
