@@ -34,6 +34,33 @@ function getIcon(file: FileProps) {
       return fileIcons.word;
     } else if (file.fileType == "pptx") {
       return fileIcons.powerpoint;
+    } else if (file.fileType == "xlsx") {
+      return fileIcons.excel;
+    } else if (file.fileType == "zip") {
+      return fileIcons.zip;
+    } else if (
+      file.fileType == "png" ||
+      file.fileType == "jpg" ||
+      file.fileType == "jpeg" ||
+      file.fileType == "svg" ||
+      file.fileType == "webm"
+    ) {
+      return fileIcons.img;
+    } else if (file.fileType == "mp3") {
+      return fileIcons.audio;
+    } else if (file.fileType == "mp4") {
+      return fileIcons.video;
+    } else if (
+      file.fileType == "py" ||
+      file.fileType == "html" ||
+      file.fileType == "css" ||
+      file.fileType == "js" ||
+      file.fileType == "ts" ||
+      file.fileType == "tsx" ||
+      file.fileType == "gd" ||
+      file.fileType == "gdshader"
+    ) {
+      return fileIcons.code;
     } else {
       return fileIcons.otherFile;
     }
