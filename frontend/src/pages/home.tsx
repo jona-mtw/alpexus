@@ -1,6 +1,16 @@
 import "./home.css";
 import SearchBar from "./components/search-bar.tsx";
 import File from "./components/file.tsx";
+import { useState, useEffect } from "react";
+
+type DirectoryEntry = {
+  path: string;
+  name: string;
+  type: "file" | "folder";
+  dateModified: string;
+  size: number;
+  fileType: string;
+};
 
 function RecentActivityPanel(props: {
   title: string;
@@ -36,20 +46,20 @@ function Note(props: { name: string; description: string; date: string }) {
 }
 
 function Home() {
-  const QuickFiles = [];
-  for (let i: number = 0; i < 5; i++) {
-    QuickFiles.push(
-      <File
-        key={i}
-        name="hello"
-        type="file"
-        fileType="tsx"
-        size={5}
-        date="14-10-2026"
-        bg={false}
-      />,
-    );
-  }
+  const [recentFiles, setRecentFiles] = useState<DirectoryEntry[]>([]);
+  useEffect(() => {
+    fetch("http://localhost:3000/api/files/recent")
+      .then((response) => {
+        if (response.ok) {
+          console.log("Recent Files Fetched");
+        } else {
+          throw new Error("Failed to fetch recent files");
+        }
+        return response.json();
+      })
+      .then((data) => setRecentFiles(data))
+      .catch((error) => console.error(error));
+  }, []);
 
   const QuickNotes = [];
   for (let i: number = 0; i < 5; i++) {
@@ -88,7 +98,19 @@ function Home() {
                 <i className="fa-solid fa-folder-open fa-xl"></i>
                 <h2>Files</h2>
               </div>
-              <div className="quick-access-files-list">{QuickFiles}</div>
+              <div className="quick-access-files-list">
+                {recentFiles.map((recentFile) => (
+                  <File
+                    key={recentFile.path + recentFile.name}
+                    name={recentFile.name}
+                    type={recentFile.type}
+                    fileType={recentFile.fileType}
+                    size={recentFile.size}
+                    date={recentFile.dateModified}
+                    bg={false}
+                  />
+                ))}
+              </div>
             </div>
             <div className="notes-quick-access panel">
               <div className="panel-header">

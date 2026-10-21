@@ -4,7 +4,9 @@ function Settings() {
   return (
     <>
       <div className="settings">
-        <h1>Settings</h1>
+        <div className="settings-section">
+          <h1>Settings</h1>
+        </div>
       </div>
     </>
   );

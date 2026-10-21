@@ -4,7 +4,9 @@ function Notes() {
   return (
     <>
       <div className="notes">
-        <h1>Notes</h1>
+        <div className="notes-section">
+          <h1>Notes</h1>
+        </div>
       </div>
     </>
   );

@@ -4,7 +4,9 @@ function Media() {
   return (
     <>
       <div className="media">
-        <h1>Media</h1>
+        <div className="media-section">
+          <h1>Media</h1>
+        </div>
       </div>
     </>
   );

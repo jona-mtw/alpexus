@@ -57,7 +57,7 @@ function StorageContainer() {
           </div>
         </div>
         <div className="storage-detailed-info">
-          <div className="photo storage-info">
+          <div className="storage-info">
             <div className="storage-info-header-wrapper">
               <i className="fa-solid fa-image"></i>
               <div className="storage-info-header">
@@ -67,7 +67,7 @@ function StorageContainer() {
             </div>
             <p className="storage-size">86MB</p>
           </div>
-          <div className="documents storage-info">
+          <div className="storage-info">
             <div className="storage-info-header-wrapper">
               <i className="fa-solid fa-file-lines"></i>
               <div className="storage-info-header">
@@ -77,7 +77,7 @@ function StorageContainer() {
             </div>
             <p className="storage-size">86MB</p>
           </div>
-          <div className="media storage-info">
+          <div className="storage-info">
             <div className="storage-info-header-wrapper">
               <i className="fa-brands fa-youtube"></i>
               <div className="storage-info-header">
@@ -87,7 +87,7 @@ function StorageContainer() {
             </div>
             <p className="storage-size">86MB</p>
           </div>
-          <div className="other storage-info">
+          <div className="storage-info">
             <div className="storage-info-header-wrapper">
               <i className="fa-solid fa-file-zipper"></i>
               <div className="storage-info-header">

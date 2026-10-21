@@ -4,7 +4,9 @@ function Passwords() {
   return (
     <>
       <div className="passwords">
-        <h1>Passwords</h1>
+        <div className="passwords-section">
+          <h1>Passwords</h1>
+        </div>
       </div>
     </>
   );
