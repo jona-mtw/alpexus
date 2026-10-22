@@ -26,7 +26,7 @@ function formatSize(sizeBytes: number): string {
 }
 
 function StorageContainer() {
-  const capacity = 0.5 * 1000 ** 3;
+  const capacity = 2 * 1000 ** 3;
 
   const [totalSize, setTotalSize] = useState(0);
   const [totalImgSize, setImgTotalSize] = useState(0);
@@ -40,32 +40,50 @@ function StorageContainer() {
       console.log(files);
       setTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
     }
+
     async function getTotalImgFilesSize() {
-      let imgFiles = ["jpg", "jpeg", "png", "webp", "svg"];
+      const imgFiles = ["jpg", "jpeg", "png", "webp", "svg"];
+      let total = 0;
 
-      for (const fileExtension of imgFiles) {
-        const response = await fetch(`http://localhost:3000/api/files?fileType=${fileExtension}`);
-        const files = await response.json();
-        setImgTotalSize(
-          files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0),
+      for (const imgFileExtension of imgFiles) {
+        const response = await fetch(
+          `http://localhost:3000/api/files?fileType=${imgFileExtension}`,
         );
+        const files = await response.json();
+        total += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
       }
+
+      setImgTotalSize(total);
     }
+
     async function getTotalDocumentFilesSize() {
-      const response = await fetch("http://localhost:3000/api/files?fileType=docx");
-      const files = await response.json();
-      setDocTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
-    }
-    async function getMediaFilesSize() {
-      let mediaFiles = ["mp3", "mp4"];
+      const docFiles = ["docx", "pdf"];
+      let total = 0;
 
-      for (const fileExtension of mediaFiles) {
-        const response = await fetch(`http://localhost:3000/api/files?fileType=${fileExtension}`);
-        const files = await response.json();
-        setMediaTotalSize(
-          files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0),
+      for (const docFileExtension of docFiles) {
+        const response = await fetch(
+          `http://localhost:3000/api/files?fileType=${docFileExtension}`,
         );
+        const files = await response.json();
+        total += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
       }
+
+      setDocTotalSize(total);
+    }
+
+    async function getMediaFilesSize() {
+      const mediaFiles = ["mp3", "mp4"];
+      let total = 0;
+
+      for (const mediaFileExtension of mediaFiles) {
+        const response = await fetch(
+          `http://localhost:3000/api/files?fileType=${mediaFileExtension}`,
+        );
+        const files = await response.json();
+        total += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
+      }
+
+      setMediaTotalSize(total);
     }
     fetchStorageSize();
     getTotalImgFilesSize();
