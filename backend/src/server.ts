@@ -19,23 +19,28 @@ type FileEntry = {
 	fileType: string
 };
 
-async function getFileSize(folderPath: string): Promise<number> {
+async function getFileSize(folderPath: string, fileType: string = ""): Promise<number> {
 	const children = await fs.readdir(folderPath, {withFileTypes: true});
 	let totalSize = 0;
 
 	for (const child of children) {
 		const childPath = path.join(folderPath, child.name);
-		if (child.isDirectory()) {totalSize += await getFileSize(childPath)}
+		if (child.isDirectory()) {totalSize += await getFileSize(childPath, fileType)}
 		else if (child.isFile()) {
-			const stats = await fs.stat(childPath);
-			totalSize += stats.size;
+			if (fileType === ""){
+				const stats = await fs.stat(childPath);
+				totalSize += stats.size;
+			} else if (path.extname(child.name).toLowerCase().slice(1) === fileType) {
+				const stats = await fs.stat(childPath);
+				totalSize += stats.size;
+			}
 		}
 	}
 
 	return totalSize
 }
 
-async function getDirectoryContents(relativePath: string = "", pathString: string = STORAGE, needSize: boolean = true): Promise<FileEntry[]> {
+async function getDirectoryContents(relativePath: string = "", pathString: string = STORAGE, needSize: boolean = true, fileType: string = ""): Promise<FileEntry[]> {
 	const children = await fs.readdir(pathString, {withFileTypes: true})
 	
 	const outputFileDir: FileEntry[] = [];
@@ -47,7 +52,7 @@ async function getDirectoryContents(relativePath: string = "", pathString: strin
 			name: path.parse(child.name).name, 
 			type: child.isDirectory() ? "folder" : "file", 
 			dateModified: stats.mtime, 
-			size: needSize ? child.isDirectory() ? await getFileSize(path.join(pathString, child.name)) : stats.size : 0, 
+			size: needSize ? child.isDirectory() ? await getFileSize(path.join(pathString, child.name), fileType) : stats.size : 0, 
 			fileType: path.extname(child.name).toLowerCase().slice(1)
 		})
 	}
@@ -89,13 +94,14 @@ app.get("/api/files", async (req, res) => {
 	const requestedPath = typeof req.query.path === "string" ? req.query.path : "";
 	const targetPath = path.resolve(STORAGE, requestedPath);
 	const relativePath = path.relative(STORAGE, targetPath)
+	const reqFileType = typeof req.query.fileType === "string" ? req.query.fileType : "";
 
 	if (relativePath === ".." || relativePath.startsWith(`..${path.sep}`)){
 		res.status(403).json({ error: "Access Denied" });
 		return;
 	}
 	try {
-		const result = await getDirectoryContents(relativePath, targetPath);
+		const result = await getDirectoryContents(relativePath, targetPath, true, reqFileType);
 		console.log(result);
 		res.json(result);
 	} catch {

@@ -28,6 +28,9 @@ function formatSize(sizeBytes: number): string {
 function StorageContainer() {
   const capacity = 0.5 * 1000 ** 3;
   const [totalSize, setTotalSize] = useState(0);
+  const [totalImgSize, setImgTotalSize] = useState(0);
+  const [totalDocSize, setDocTotalSize] = useState(0);
+  const [totalMediaSize, setMediaTotalSize] = useState(0);
   useEffect(() => {
     async function fetchStorageSize() {
       const response = await fetch(`http://localhost:3000/api/files?path=`);
@@ -35,9 +38,29 @@ function StorageContainer() {
       console.log(files);
       setTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
     }
-
+    async function getTotalImgFilesSize() {
+      const response = await fetch("http://localhost:3000/api/files?fileType=jpg");
+      const files = await response.json();
+      setImgTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
+    }
+    async function getTotalDocumentFilesSize() {
+      const response = await fetch("http://localhost:3000/api/files?fileType=docx");
+      const files = await response.json();
+      setDocTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
+    }
+    async function getMediaFilesSize() {
+      const response = await fetch("http://localhost:3000/api/files?fileType=mp4");
+      const files = await response.json();
+      setMediaTotalSize(
+        files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0),
+      );
+    }
     fetchStorageSize();
+    getTotalImgFilesSize();
+    getTotalDocumentFilesSize();
+    getMediaFilesSize();
   }, []);
+
   return (
     <>
       <div className="storage-container">
@@ -65,7 +88,7 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="storage-size">86MB</p>
+            <p className="storage-size">{formatSize(totalImgSize)}</p>
           </div>
           <div className="storage-info">
             <div className="storage-info-header-wrapper">
@@ -75,7 +98,7 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="storage-size">86MB</p>
+            <p className="storage-size">{formatSize(totalDocSize)}</p>
           </div>
           <div className="storage-info">
             <div className="storage-info-header-wrapper">
@@ -85,7 +108,7 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="storage-size">86MB</p>
+            <p className="storage-size">{formatSize(totalMediaSize)}</p>
           </div>
           <div className="storage-info">
             <div className="storage-info-header-wrapper">
@@ -95,7 +118,9 @@ function StorageContainer() {
                 <p>54 files</p>
               </div>
             </div>
-            <p className="storage-size">86MB</p>
+            <p className="storage-size">
+              {formatSize(totalSize - (totalImgSize + totalDocSize + totalMediaSize))}
+            </p>
           </div>
         </div>
       </div>
