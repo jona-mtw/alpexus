@@ -43,7 +43,7 @@ function getIcon(file: FileProps) {
       file.fileType == "jpg" ||
       file.fileType == "jpeg" ||
       file.fileType == "svg" ||
-      file.fileType == "webm"
+      file.fileType == "webp"
     ) {
       return fileIcons.img;
     } else if (file.fileType == "mp3") {
