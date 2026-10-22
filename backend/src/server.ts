@@ -19,7 +19,6 @@ type FileEntry = {
 	fileType: string
 };
 
-
 async function getFileSize(folderPath: string): Promise<number> {
 	const children = await fs.readdir(folderPath, {withFileTypes: true});
 	let totalSize = 0;
@@ -114,7 +113,6 @@ app.get("/api/files/recent", async (_req, res) => {
 		res.status(500).json({error: "Failed to fetch recent files"});
 	}
 });
-
 
 app.listen(PORT, () => {
 	console.log(`Server running on port ${PORT}`);

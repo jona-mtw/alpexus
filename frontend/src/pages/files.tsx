@@ -11,8 +11,12 @@ type DirectoryEntry = {
   fileType: string;
 };
 
-function Files() {
-  const [filePath, setFilePath] = useState("");
+type FilesProps = {
+  quickAccessFilePath?: string;
+};
+
+function Files({ quickAccessFilePath = "" }: FilesProps) {
+  const [filePath, setFilePath] = useState(quickAccessFilePath);
   const [files, setFiles] = useState<DirectoryEntry[]>([]);
   useEffect(() => {
     fetch(`http://localhost:3000/api/files?path=${encodeURIComponent(filePath)}`)

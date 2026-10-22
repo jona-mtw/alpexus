@@ -12,13 +12,19 @@ import StorageContainer from "./pages/components/storage-panel.tsx";
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const pages: React.ComponentType[] = [Home, Files, Passwords, Notes, Media, Settings];
+  const pages: React.ComponentType[] = [Passwords, Notes, Media, Settings];
   const [pageNo, setPageNo] = useState(0);
-  const ActivePage = pages[pageNo];
+  const ActivePage = pages[pageNo - 2];
 
   const sidebars: React.ComponentType[] = [StorageContainer];
   const [sidebarNo, setSidebarNo] = useState(0);
   const ActiveSidebar = sidebars[sidebarNo];
+
+  const [filePath, setFilePath] = useState("");
+  const handleFilePath = (path: string) => {
+    setFilePath(path);
+    setPageNo(1);
+  };
 
   return (
     <div className="app-container">
@@ -97,7 +103,13 @@ function App() {
         </span>
       </nav>
       <main>
-        <ActivePage />
+        {pageNo === 0 ? (
+          <Home onRecentFileClicked={handleFilePath} />
+        ) : pageNo === 1 ? (
+          <Files quickAccessFilePath={filePath} />
+        ) : (
+          <ActivePage />
+        )}
         <aside className="right-sidebar">
           <ActiveSidebar />
         </aside>

@@ -45,7 +45,11 @@ function Note(props: { name: string; description: string; date: string }) {
   );
 }
 
-function Home() {
+type HomeProp = {
+  onRecentFileClicked: (path: string) => void;
+};
+
+function Home({ onRecentFileClicked }: HomeProp) {
   const [recentFiles, setRecentFiles] = useState<DirectoryEntry[]>([]);
   useEffect(() => {
     fetch("http://localhost:3000/api/files/recent")
@@ -101,13 +105,23 @@ function Home() {
               <div className="quick-access-files-list">
                 {recentFiles.map((recentFile) => (
                   <File
-                    key={recentFile.path + recentFile.name}
+                    key={recentFile.path}
                     name={recentFile.name}
                     type={recentFile.type}
                     fileType={recentFile.fileType}
                     size={recentFile.size}
                     date={recentFile.dateModified}
                     bg={false}
+                    onClick={() => {
+                      onRecentFileClicked(
+                        recentFile.fileType == ""
+                          ? recentFile.path.replace(recentFile.name, "")
+                          : recentFile.path.replace(
+                              recentFile.name + "." + recentFile.fileType,
+                              "",
+                            ),
+                      );
+                    }}
                   />
                 ))}
               </div>
