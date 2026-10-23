@@ -9,6 +9,7 @@ type DirectoryEntry = {
   dateModified: string;
   size: number;
   fileType: string;
+  fileNo: number;
 };
 
 type FilesProps = {

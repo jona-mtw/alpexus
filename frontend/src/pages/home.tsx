@@ -10,6 +10,7 @@ type DirectoryEntry = {
   dateModified: string;
   size: number;
   fileType: string;
+  fileNo: number;
 };
 
 function RecentActivityPanel(props: {

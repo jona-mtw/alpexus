@@ -16,28 +16,36 @@ type FileEntry = {
 	type: "file" | "folder",
 	dateModified: Date,
 	size: number,
-	fileType: string
+	fileType: string,
+	fileNo: number
 };
 
-async function getFileSize(folderPath: string, fileType: string = ""): Promise<number> {
+async function getFileSize(folderPath: string, fileType: string = ""): Promise<number[]> {
 	const children = await fs.readdir(folderPath, {withFileTypes: true});
 	let totalSize = 0;
+	let fileNo = 0;
 
 	for (const child of children) {
 		const childPath = path.join(folderPath, child.name);
-		if (child.isDirectory()) {totalSize += await getFileSize(childPath, fileType)}
+		if (child.isDirectory()) {
+			const [childSize, childNo] = await getFileSize(childPath, fileType); 
+			totalSize += childSize; 
+			fileNo += childNo
+		}
 		else if (child.isFile()) {
 			if (fileType === ""){
 				const stats = await fs.stat(childPath);
 				totalSize += stats.size;
+				fileNo ++;
 			} else if (path.extname(child.name).toLowerCase().slice(1) === fileType) {
 				const stats = await fs.stat(childPath);
 				totalSize += stats.size;
+				fileNo ++;
 			}
 		}
 	}
 
-	return totalSize
+	return [totalSize, fileNo];
 }
 
 async function getDirectoryContents(relativePath: string = "", pathString: string = STORAGE, needSize: boolean = true, fileType: string = ""): Promise<FileEntry[]> {
@@ -47,13 +55,16 @@ async function getDirectoryContents(relativePath: string = "", pathString: strin
 
 	for (const child of children) {
 		const stats = await fs.stat(path.join(pathString, child.name));
+		const fileSize = child.isDirectory() ? await getFileSize(path.join(pathString, child.name), fileType) : 
+			[stats.size, fileType === "" || path.extname(child.name).toLowerCase().slice(1) === fileType ? 1 : 0];
 		outputFileDir.push({
 			path: path.join(relativePath, child.name),
 			name: path.parse(child.name).name, 
 			type: child.isDirectory() ? "folder" : "file", 
 			dateModified: stats.mtime, 
-			size: needSize ? child.isDirectory() ? await getFileSize(path.join(pathString, child.name), fileType) : stats.size : 0, 
-			fileType: path.extname(child.name).toLowerCase().slice(1)
+			size: needSize ? child.isDirectory() ? fileSize[0] : stats.size : 0, 
+			fileType: path.extname(child.name).toLowerCase().slice(1),
+			fileNo: fileSize[1]
 		})
 	}
 

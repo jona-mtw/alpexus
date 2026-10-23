@@ -49,6 +49,7 @@ function App() {
             <span
               onClick={() => {
                 setPageNo(1);
+                setFilePath("");
                 setSidebarNo(0);
               }}
             >

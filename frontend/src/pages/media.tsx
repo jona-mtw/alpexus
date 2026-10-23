@@ -4,9 +4,12 @@ function Media() {
   return (
     <>
       <div className="media">
-        <div className="media-section">
-          <h1>Media</h1>
-        </div>
+        <nav className="media-top-row">
+          <h2>Movies</h2>
+          <h2>TV Shows</h2>
+          <h2>Music</h2>
+        </nav>
+        <div className="media-section"></div>
       </div>
     </>
   );
