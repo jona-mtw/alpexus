@@ -91,8 +91,6 @@ main {
 }
 
 .right-sidebar {
-	width: 250px;
-	flex-shrink: 0;
 	height: inherit;
 	display: flex;
 }

@@ -10,13 +10,21 @@ import Settings from "./pages/settings.tsx";
 
 import StorageContainer from "./pages/components/storage-panel.tsx";
 
+function EmptySidebar() {
+  return (
+    <>
+      <div className="empty-sidebar" style={{ width: "20px" }}></div>
+    </>
+  );
+}
+
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const pages: React.ComponentType[] = [Passwords, Notes, Media, Settings];
   const [pageNo, setPageNo] = useState(0);
   const ActivePage = pages[pageNo - 2];
 
-  const sidebars: React.ComponentType[] = [StorageContainer];
+  const sidebars: React.ComponentType[] = [StorageContainer, EmptySidebar];
   const [sidebarNo, setSidebarNo] = useState(0);
   const ActiveSidebar = sidebars[sidebarNo];
 
@@ -61,7 +69,7 @@ function App() {
             <span
               onClick={() => {
                 setPageNo(2);
-                setSidebarNo(0);
+                setSidebarNo(1);
               }}
             >
               <i className="fa-solid fa-lock fa-xl"></i>
@@ -72,7 +80,7 @@ function App() {
             <span
               onClick={() => {
                 setPageNo(3);
-                setSidebarNo(0);
+                setSidebarNo(1);
               }}
             >
               <i className="fa-solid fa-note-sticky fa-xl"></i>
@@ -83,7 +91,7 @@ function App() {
             <span
               onClick={() => {
                 setPageNo(4);
-                setSidebarNo(0);
+                setSidebarNo(1);
               }}
             >
               <i className="fa-solid fa-image fa-xl"></i>
