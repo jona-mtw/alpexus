@@ -253,6 +253,44 @@ app.get("/api/media/:itemId/stream", async (req, res) => {
   }
 });
 
+app.get("/api/media/:itemId/cover", async (req, res) => {
+  const jellyfinUrl = process.env.JELLYFIN_URL;
+  const apiKey = process.env.JELLYFIN_API_KEY;
+
+  if (!jellyfinUrl || !apiKey) {
+    res.status(500).json({ error: "Jellyfin config is missing" });
+    return;
+  }
+
+  try {
+    const { itemId } = req.params;
+    const headers: Record<string, string> = {
+      Authorization: `MediaBrowser Token=${apiKey}`,
+    };
+    if (req.headers.range) {
+      headers.Range = req.headers.range;
+    }
+    const response = await fetch(
+      `${jellyfinUrl}/Items/${encodeURIComponent(itemId)}/Images/Primary`,
+      {
+        headers,
+      },
+    );
+    if (!response.ok || !response.body) {
+      res.sendStatus(response.status || 502);
+      return;
+    }
+  } catch (error) {
+    console.error("Fetching Cover Art Failed: ", error);
+
+    if (!res.headersSent) {
+      res.sendStatus(500);
+    } else {
+      res.end();
+    }
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

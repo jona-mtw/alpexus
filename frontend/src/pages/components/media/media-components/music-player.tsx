@@ -38,7 +38,17 @@ function MusicPlayer() {
         }}
         src="http://localhost:3000/api/media/0c79456ccc4d447ec88236fce8e38a4d/stream"
       ></audio>
-
+      <div className="cover-art">
+        <img
+          src="http://localhost:3000/api/media/0c79456ccc4d447ec88236fce8e38a4d/cover"
+          alt="hello"
+          className="album-cover"
+          onError={(e) => {
+            const img = e.currentTarget;
+            img.src = "http://localhost:5173/alpexus/placeholder.png";
+          }}
+        />
+      </div>
       <div className="music-controls">
         <div className="controls">
           <i className="fa-solid fa-backward"></i>

@@ -1,41 +1,115 @@
 .music-player {
-	display: flex;
-	flex-direction: column;
-	background-color: var(--panel-bg);
-	padding: 15px;
-	padding-bottom: 0;
-	justify-content: center;
-	align-items: center;
+  display: flex;
+  flex-direction: row;
+  background-color: var(--panel-bg);
+  padding: 15px;
+  padding-bottom: 0;
+  justify-content: center;
+  align-items: center;
 }
 
 .music-controls {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
 }
 
 .controls {
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	gap: 15px;
-	margin-bottom: 15px;
-	i {
-		font-size: 25px;
-	}
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  i {
+    font-size: 25px;
+  }
 }
 
 .slider {
-	height: 5px;
-	width: 50%;
-	align-self: center;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 50%;
+  align-self: center;
+  height: 5px;
+  border-radius: 50px;
+  background: transparent;
 }
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 5px;
 }
 
+.slider::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #7865e377;
+  border-radius: 15px;
+  height: 5px;
+}
+
+.slider:hover::-webkit-slider-thumb {
+  margin-top: -2px;
+  width: 10px;
+  height: 10px;
+  background: #7066bb;
+  border-radius: 50%;
+  border: none;
+}
+
+.slider::-moz-range-track {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #7865e377;
+  border-radius: 15px;
+  height: 5px;
+}
+
+.slider::-moz-range-progress {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #251c53b9;
+  border-radius: 15px;
+  height: 5px;
+}
+
+.slider::-moz-range-thumb {
+  appearance: none;
+  background: transparent;
+  border: none;
+}
+
+.slider:hover::-moz-range-thumb {
+  margin-top: -2px;
+  width: 10px;
+  height: 10px;
+  background: #7066bb;
+  border-radius: 50%;
+  border: none;
+}
+
+@media (hover: none) {
+  .slider::-webkit-slider-thumb {
+    width: 10px;
+    height: 10px;
+    background: #7066bb;
+    border-radius: 50%;
+		margin-top: -2px;
+    border: none;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    background: #7066bb;
+    border-radius: 50%;
+    border: none;
+  }
+}
+
+.album-cover {
+  height: 60px;
+  border-radius: 15px;
+}
