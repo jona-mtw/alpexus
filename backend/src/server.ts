@@ -3,7 +3,7 @@ import path from "node:path";
 import express from "express";
 import cors from "cors";
 import "dotenv/config.js";
-import { error } from "node:console";
+import { Readable } from "node:stream";
 
 const app = express();
 app.use(cors());
@@ -157,8 +157,6 @@ app.get("/api/media", async (_req, res) => {
   }
 
   try {
-    console.log("Jellyfin URL:", jellyfinUrl);
-    console.log("API key loaded:", Boolean(apiKey));
     const response = await fetch(
       `${jellyfinUrl}/Items?Recursive=true&IncludeItemTypes=Audio&Fields=Overview,ProductionYear,Genres`,
       {
@@ -190,6 +188,68 @@ app.get("/api/media", async (_req, res) => {
     res.status(502).json({
       error: "Could not connect to Jellyfin",
     });
+  }
+});
+
+app.get("/api/media/:itemId/stream", async (req, res) => {
+  const jellyfinUrl = process.env.JELLYFIN_URL;
+  const apiKey = process.env.JELLYFIN_API_KEY;
+
+  if (!jellyfinUrl || !apiKey) {
+    res.status(500).json({ error: "Jellyfin config is missing" });
+    return;
+  }
+
+  try {
+    const { itemId } = req.params;
+    const headers: Record<string, string> = {
+      Authorization: `MediaBrowser Token="${apiKey}"`,
+    };
+    if (req.headers.range) {
+      headers.Range = req.headers.range;
+    }
+
+    const response = await fetch(`${jellyfinUrl}/Audio/${encodeURIComponent(itemId)}/stream`, {
+      headers,
+    });
+    if (!response.ok || !response.body) {
+      res.sendStatus(response.status || 502);
+      return;
+    }
+
+    for (const name of ["content-type", "content-length", "content-range", "accept-ranges"]) {
+      const value = response.headers.get(name);
+
+      if (value) {
+        res.setHeader(name, value);
+      }
+    }
+
+    res.status(response.status);
+
+    const stream = Readable.fromWeb(
+      response.body as unknown as import("node:stream/web").ReadableStream,
+    );
+
+    stream.on("error", (error) => {
+      console.error("Audio stream error:", error);
+
+      if (!res.headersSent) {
+        res.sendStatus(502);
+      } else {
+        res.destroy(error);
+      }
+    });
+
+    stream.pipe(res);
+  } catch (error) {
+    console.error("Audio streaming failed:", error);
+
+    if (!res.headersSent) {
+      res.sendStatus(500);
+    } else {
+      res.end();
+    }
   }
 });
 
