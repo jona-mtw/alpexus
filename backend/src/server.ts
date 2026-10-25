@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import express from "express";
+import express, { type Request, type Response } from "express";
 import cors from "cors";
 import "dotenv/config.js";
 import { Readable } from "node:stream";
@@ -11,6 +11,8 @@ app.use(express.json());
 
 const PORT = 3000;
 const STORAGE = path.resolve("storage");
+
+//#region Files
 
 type FileEntry = {
   path: string;
@@ -145,152 +147,119 @@ app.get("/api/files/recent", async (_req, res) => {
   }
 });
 
-app.get("/api/media", async (_req, res) => {
-  const jellyfinUrl = process.env.JELLYFIN_URL;
+function getJellyfinConfig() {
+  const url = process.env.JELLYFIN_URL;
   const apiKey = process.env.JELLYFIN_API_KEY;
 
-  if (!jellyfinUrl || !apiKey) {
-    res.status(500).json({
-      error: "Jellyfin Config is missing",
-    });
-    return;
+  if (!url || !apiKey) {
+    throw new Error("Jellyfin Config is missing");
+  }
+  return { url, apiKey };
+}
+//#endregion
+
+//#region JellyFin
+
+async function fetchJellyfin(endpoint: string, extraHeaders: Record<string, string> = {}) {
+  const { url, apiKey } = getJellyfinConfig();
+
+  return fetch(`${url}${endpoint}`, {
+    headers: {
+      Authorization: `MediaBrowser Token=${apiKey}`,
+      ...extraHeaders,
+    },
+  });
+}
+
+async function getMediaItems(includeItemTypes: string) {
+  const params = new URLSearchParams({
+    Recursive: "true",
+    IncludeItemTypes: includeItemTypes,
+    Fields: "Overview,ProductionYear,Genres",
+  });
+
+  const response = await fetchJellyfin(`/Items?${params}`);
+
+  if (!response.ok) {
+    throw new Error(`Jellyfin returned status ${response.status}`);
   }
 
-  try {
-    const response = await fetch(
-      `${jellyfinUrl}/Items?Recursive=true&IncludeItemTypes=Audio&Fields=Overview,ProductionYear,Genres`,
-      {
-        headers: {
-          Authorization: `MediaBrowser Token="${apiKey}"`,
-        },
-      },
-    );
+  const data = (await response.json()) as {
+    Items?: unknown[];
+  };
 
-    if (!response.ok) {
-      const errorBody = await response.text();
+  return data.Items ?? [];
+}
 
-      console.error("Jellyfin status:", response.status);
-      console.error("Jellyfin response:", errorBody);
+function mediaItemsHandler(includeItemTypes: string = "Audio,Movie,Episode,Video,MusicVideo") {
+  return async (_req: Request, res: Response) => {
+    try {
+      res.json(await getMediaItems(includeItemTypes));
+    } catch (error) {
+      console.error("Failed to fetch media: ", error);
 
-      res.status(response.status).json({
-        error: "Jellyfin request failed",
-        status: response.status,
-        details: errorBody,
+      res.status(502).json({
+        error: "Failed to fetch media from Jellyfin",
       });
-
-      return;
     }
-    const data = await response.json();
-    res.json(data.Items ?? []);
-  } catch (error) {
-    console.error("Jellyfin error: ", error);
+  };
+}
 
-    res.status(502).json({
-      error: "Could not connect to Jellyfin",
-    });
-  }
-});
+app.get("/api/media", mediaItemsHandler());
+
+app.get("/api/media/songs", mediaItemsHandler("Audio"));
 
 app.get("/api/media/:itemId/stream", async (req, res) => {
-  const jellyfinUrl = process.env.JELLYFIN_URL;
-  const apiKey = process.env.JELLYFIN_API_KEY;
+  const { itemId } = req.params;
+  const type = req.query.type === "video" ? "video" : "audio";
 
-  if (!jellyfinUrl || !apiKey) {
-    res.status(500).json({ error: "Jellyfin config is missing" });
+  const endpoint =
+    type === "video"
+      ? `/Videos/${encodeURIComponent(itemId)}/stream`
+      : `/Audio/${encodeURIComponent(itemId)}/stream`;
+
+  const response = await fetchJellyfin(
+    endpoint,
+    req.headers.range ? { Range: req.headers.range } : {},
+  );
+
+  if (!response.ok || !response.ok) {
+    res.sendStatus(response.status || 502);
     return;
   }
 
-  try {
-    const { itemId } = req.params;
-    const headers: Record<string, string> = {
-      Authorization: `MediaBrowser Token="${apiKey}"`,
-    };
-    if (req.headers.range) {
-      headers.Range = req.headers.range;
+  response.headers.forEach((value, key) => {
+    if (
+      ["content-type", "content-length", "content-range", "accept-ranges"].includes(
+        key.toLowerCase(),
+      )
+    ) {
+      res.setHeader(key, value);
     }
+  });
 
-    const response = await fetch(`${jellyfinUrl}/Audio/${encodeURIComponent(itemId)}/stream`, {
-      headers,
-    });
-    if (!response.ok || !response.body) {
-      res.sendStatus(response.status || 502);
-      return;
-    }
-
-    for (const name of ["content-type", "content-length", "content-range", "accept-ranges"]) {
-      const value = response.headers.get(name);
-
-      if (value) {
-        res.setHeader(name, value);
-      }
-    }
-
-    res.status(response.status);
-
-    const stream = Readable.fromWeb(
-      response.body as unknown as import("node:stream/web").ReadableStream,
-    );
-
-    stream.on("error", (error) => {
-      console.error("Audio stream error:", error);
-
-      if (!res.headersSent) {
-        res.sendStatus(502);
-      } else {
-        res.destroy(error);
-      }
-    });
-
-    stream.pipe(res);
-  } catch (error) {
-    console.error("Audio streaming failed:", error);
-
-    if (!res.headersSent) {
-      res.sendStatus(500);
-    } else {
-      res.end();
-    }
-  }
+  res.status(response.status);
+  Readable.fromWeb(response.body as import("node:stream/web").ReadableStream).pipe(res);
 });
 
 app.get("/api/media/:itemId/cover", async (req, res) => {
-  const jellyfinUrl = process.env.JELLYFIN_URL;
-  const apiKey = process.env.JELLYFIN_API_KEY;
+  const { itemId } = req.params;
+  const endpoint = `/Items/${itemId}/Images/Primary`;
 
-  if (!jellyfinUrl || !apiKey) {
-    res.status(500).json({ error: "Jellyfin config is missing" });
+  const response = await fetchJellyfin(endpoint);
+
+  if (!response.ok || !response.body) {
+    res.sendStatus(response.status || 404);
     return;
   }
 
-  try {
-    const { itemId } = req.params;
-    const headers: Record<string, string> = {
-      Authorization: `MediaBrowser Token=${apiKey}`,
-    };
-    if (req.headers.range) {
-      headers.Range = req.headers.range;
-    }
-    const response = await fetch(
-      `${jellyfinUrl}/Items/${encodeURIComponent(itemId)}/Images/Primary`,
-      {
-        headers,
-      },
-    );
-    if (!response.ok || !response.body) {
-      res.sendStatus(response.status || 502);
-      return;
-    }
-  } catch (error) {
-    console.error("Fetching Cover Art Failed: ", error);
+  res.setHeader("Content-Type", response.headers.get("content-type") || "image/jpeg");
 
-    if (!res.headersSent) {
-      res.sendStatus(500);
-    } else {
-      res.end();
-    }
-  }
+  res.status(response.status);
+  Readable.fromWeb(response.body as import("node:stream/web").ReadableStream).pipe(res);
 });
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+//#endregion

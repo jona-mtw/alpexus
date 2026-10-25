@@ -8,11 +8,28 @@
   align-items: center;
 }
 
+.album-cover {
+  flex: 0.3;
+  height: 60px;
+  border-radius: 15px;
+  margin-right: 15px;
+}
+
+.music-details {
+  flex: 0.7;
+}
+
 .music-controls {
+  flex: 5;
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: 100%;
+}
+
+.placeholder-wrapper {
+  flex: 1;
+  height: 100%;
 }
 
 .controls {
@@ -62,7 +79,7 @@
 .slider::-moz-range-track {
   -webkit-appearance: none;
   appearance: none;
-  background: #7865e377;
+  background: #251c53b9;
   border-radius: 15px;
   height: 5px;
 }
@@ -70,7 +87,7 @@
 .slider::-moz-range-progress {
   -webkit-appearance: none;
   appearance: none;
-  background: #251c53b9;
+  background: #7865e377;
   border-radius: 15px;
   height: 5px;
 }
@@ -107,9 +124,4 @@
     border-radius: 50%;
     border: none;
   }
-}
-
-.album-cover {
-  height: 60px;
-  border-radius: 15px;
 }

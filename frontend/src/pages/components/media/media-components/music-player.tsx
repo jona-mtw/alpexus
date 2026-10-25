@@ -49,6 +49,10 @@ function MusicPlayer() {
           }}
         />
       </div>
+      <div className="music-details">
+        <h2 className="song-name">NAme</h2>
+        <p className="song-artist">hello</p>
+      </div>
       <div className="music-controls">
         <div className="controls">
           <i className="fa-solid fa-backward"></i>
@@ -60,6 +64,7 @@ function MusicPlayer() {
         </div>
         <input type="range" className="slider"></input>
       </div>
+      <div className="placeholder-wrapper"></div>
     </div>
   );
 }
