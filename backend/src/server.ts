@@ -207,6 +207,8 @@ app.get("/api/media", mediaItemsHandler());
 
 app.get("/api/media/songs", mediaItemsHandler("Audio"));
 
+app.get("/api/media/albums", mediaItemsHandler("MusicAlbum"));
+
 app.get("/api/media/:itemId/stream", async (req, res) => {
   const { itemId } = req.params;
   const type = req.query.type === "video" ? "video" : "audio";

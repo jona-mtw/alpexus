@@ -9,6 +9,7 @@
   box-sizing: border-box;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .music-details-wrapper {
@@ -24,11 +25,14 @@
 }
 
 .music-controls {
-  flex: 5;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 100%;
+  align-items: center;
 }
 
 .placeholder-wrapper {
@@ -38,11 +42,11 @@
 
 .controls {
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 15px;
   margin-bottom: 15px;
+  width: 100%;
   i {
     font-size: 25px;
   }
@@ -54,6 +58,8 @@
   overflow: hidden;
   flex: 1;
   height: 1.5em;
+  min-width: 0;
+  flex: 1;
 }
 
 p.song-artist{
@@ -67,7 +73,7 @@ p.song-artist{
 .slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 75%;
+  width: 100%;
   align-self: center;
   height: 5px;
   border-radius: 50px;

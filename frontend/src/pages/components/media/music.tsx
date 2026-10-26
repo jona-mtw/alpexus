@@ -23,11 +23,18 @@ function Music() {
   }, []);
 
   const song = songs[songIndex];
+  const albums = async () => (await fetch("http://localhost:3000/api/media/albums")).json;
+
   return (
     <div className="music">
       <div className="music-info">
         <h1>Music</h1>
-        <div className="albums"></div>
+        {albums.length > 0 ? (
+          <>
+            <h2>Albums</h2>
+            <div className="albums"></div>
+          </>
+        ) : null}
         <h2>Tracks</h2>
         <div className="tracks">
           {songs.map((song, index) => (
