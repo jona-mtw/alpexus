@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./music-player.css";
 
 type Song = {
@@ -9,11 +9,15 @@ type Song = {
 
 type MusicPlayerProps = {
   song: Song;
+  onNext: () => void;
+  onPrevious: () => void;
 };
 
-function MusicPlayer({ song }: MusicPlayerProps) {
+function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   function togglePause() {
     const audio = audioRef.current;
@@ -34,10 +38,30 @@ function MusicPlayer({ song }: MusicPlayerProps) {
   console.log(audioRef.current?.currentSrc);
   console.log(audioRef.current?.error);
 
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    setCurrentTime(0);
+    setDuration(0);
+    setIsPlaying(false);
+
+    audio.load();
+  }, [song.Id]);
+
   return (
     <div className="music-player">
       <audio
         ref={audioRef}
+        onLoadedMetadata={(event) => {
+          setDuration(event.currentTarget.duration);
+        }}
+        onTimeUpdate={(event) => {
+          setCurrentTime(event.currentTarget.currentTime);
+        }}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
         onError={(event) => {
           const audio = event.currentTarget;
 
@@ -67,14 +91,28 @@ function MusicPlayer({ song }: MusicPlayerProps) {
       </div>
       <div className="music-controls">
         <div className="controls">
-          <i className="fa-solid fa-backward"></i>
+          <i className="fa-solid fa-backward" onClick={onPrevious}></i>
           <i
             onClick={togglePause}
             className={isPlaying ? "fa-solid fa-pause" : "fa-solid fa-play"}
           ></i>
-          <i className="fa-solid fa-forward"></i>
+          <i className="fa-solid fa-forward" onClick={onNext}></i>
         </div>
-        <input type="range" className="slider"></input>
+        <input
+          type="range"
+          className="slider"
+          min={0}
+          max={duration || 0}
+          value={currentTime}
+          onChange={(event) => {
+            const time = Number(event.target.value);
+
+            if (audioRef.current) {
+              audioRef.current.currentTime = time;
+            }
+            setCurrentTime(time);
+          }}
+        ></input>
       </div>
       <div className="placeholder-wrapper"></div>
     </div>
