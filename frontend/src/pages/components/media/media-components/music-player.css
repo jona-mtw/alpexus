@@ -8,15 +8,16 @@
   align-items: center;
 }
 
+.music-details-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
 .album-cover {
-  flex: 0.3;
   height: 60px;
   border-radius: 15px;
   margin-right: 15px;
-}
-
-.music-details {
-  flex: 0.7;
 }
 
 .music-controls {
@@ -44,10 +45,18 @@
   }
 }
 
+p.song-artist{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 7em;
+  height: 2em;
+}
+
 .slider {
   -webkit-appearance: none;
   appearance: none;
-  width: 50%;
+  width: 75%;
   align-self: center;
   height: 5px;
   border-radius: 50px;

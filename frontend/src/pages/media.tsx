@@ -12,11 +12,6 @@ function Media() {
   function pageClicked(pageNo: number) {
     setPageNo(pageNo);
   }
-
-  function fetchSongs() {
-    return fetch("http://localhost:3000/api/media/songs");
-  }
-
   return (
     <>
       <div className="media">

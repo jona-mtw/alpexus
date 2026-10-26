@@ -1,7 +1,17 @@
 import { useRef, useState } from "react";
 import "./music-player.css";
 
-function MusicPlayer() {
+type Song = {
+  Id: string;
+  Name: string;
+  Artists: string[];
+};
+
+type MusicPlayerProps = {
+  song: Song;
+};
+
+function MusicPlayer({ song }: MusicPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -36,22 +46,24 @@ function MusicPlayer() {
           console.log("Network state:", audio.networkState);
           console.log("Ready state:", audio.readyState);
         }}
-        src="http://localhost:3000/api/media/0c79456ccc4d447ec88236fce8e38a4d/stream"
+        src={`http://localhost:3000/api/media/${song.Id}/stream`}
       ></audio>
-      <div className="cover-art">
-        <img
-          src="http://localhost:3000/api/media/0c79456ccc4d447ec88236fce8e38a4d/cover"
-          alt="hello"
-          className="album-cover"
-          onError={(e) => {
-            const img = e.currentTarget;
-            img.src = "http://localhost:5173/alpexus/placeholder.png";
-          }}
-        />
-      </div>
-      <div className="music-details">
-        <h2 className="song-name">NAme</h2>
-        <p className="song-artist">hello</p>
+      <div className="music-details-wrapper">
+        <div className="cover-art">
+          <img
+            src={`http://localhost:3000/api/media/${song.Id}/cover`}
+            alt="hello"
+            className="album-cover"
+            onError={(e) => {
+              const img = e.currentTarget;
+              img.src = "http://localhost:5173/alpexus/placeholder.png";
+            }}
+          />
+        </div>
+        <div className="music-details">
+          <h2 className="song-name">{song.Name}</h2>
+          <p className="song-artist">{song.Artists.join(", ") || "Unknown Artist"}</p>
+        </div>
       </div>
       <div className="music-controls">
         <div className="controls">

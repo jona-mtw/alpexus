@@ -13,7 +13,6 @@ const PORT = 3000;
 const STORAGE = path.resolve("storage");
 
 //#region Files
-
 type FileEntry = {
   path: string;
   name: string;
@@ -146,7 +145,9 @@ app.get("/api/files/recent", async (_req, res) => {
     res.status(500).json({ error: "Failed to fetch recent files" });
   }
 });
+//#endregion
 
+//#region JellyFin
 function getJellyfinConfig() {
   const url = process.env.JELLYFIN_URL;
   const apiKey = process.env.JELLYFIN_API_KEY;
@@ -156,9 +157,6 @@ function getJellyfinConfig() {
   }
   return { url, apiKey };
 }
-//#endregion
-
-//#region JellyFin
 
 async function fetchJellyfin(endpoint: string, extraHeaders: Record<string, string> = {}) {
   const { url, apiKey } = getJellyfinConfig();
@@ -258,8 +256,8 @@ app.get("/api/media/:itemId/cover", async (req, res) => {
   res.status(response.status);
   Readable.fromWeb(response.body as import("node:stream/web").ReadableStream).pipe(res);
 });
+//#endregion
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-//#endregion
