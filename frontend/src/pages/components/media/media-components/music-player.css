@@ -1,9 +1,12 @@
 .music-player {
+  margin-top: auto;
+  flex-shrink: 0;
+  min-height: 80px;
   display: flex;
   flex-direction: row;
   background-color: var(--panel-bg);
   padding: 15px;
-  padding-bottom: 0;
+  box-sizing: border-box;
   justify-content: center;
   align-items: center;
 }
@@ -43,6 +46,14 @@
   i {
     font-size: 25px;
   }
+}
+
+.song-name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 1;
+  height: 1.5em;
 }
 
 p.song-artist{

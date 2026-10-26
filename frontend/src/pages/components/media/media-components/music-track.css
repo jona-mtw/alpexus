@@ -1,8 +1,11 @@
 .music-track {
-	display: flex;
-	flex-direction: row;
-	margin: 5px;
-	.song-artist {
-		width: 10em;
-	}
+  display: flex;
+  flex-direction: row;
+  margin: 5px;
+  .song-name {
+    width: 50vw;
+  }
+  .song-artist {
+    width: 10em;
+  }
 }

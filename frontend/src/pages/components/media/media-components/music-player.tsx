@@ -85,7 +85,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           />
         </div>
         <div className="music-details">
-          <h2 className="song-name">{song.Name}</h2>
+          <h4 className="song-name">{song.Name}</h4>
           <p className="song-artist">{song.Artists.join(", ") || "Unknown Artist"}</p>
         </div>
       </div>

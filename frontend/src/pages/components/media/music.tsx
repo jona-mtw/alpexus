@@ -28,8 +28,8 @@ function Music() {
       <div className="music-info">
         <h1>Music</h1>
         <div className="albums"></div>
+        <h2>Tracks</h2>
         <div className="tracks">
-          <h2>Tracks</h2>
           {songs.map((song, index) => (
             <MusicTrack key={song.Id} song={song} onClick={() => setSongIndex(index)} />
           ))}
