@@ -20,20 +20,19 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [hasImage, setHasImage] = useState(true);
+  const [isSeeking, setIsSeeking] = useState(false);
 
   function togglePause() {
     const audio = audioRef.current;
-    if (!audio) {
-      return;
-    }
+    if (!audio) return;
 
     if (audio.paused) {
-      audio.play();
-      console.log("playing");
+      audio.play().catch((error) => {
+        console.error("Failed to play audio", error);
+      });
     } else {
       audio.pause();
     }
-    setIsPlaying(!isPlaying);
     console.log("paused");
   }
 
@@ -47,23 +46,37 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
-
-    audio.load();
   }, [song.Id]);
+
+  useEffect(() => {
+    function stopSeeking() {
+      setIsSeeking(false);
+    }
+
+    window.addEventListener("pointerup", stopSeeking);
+    window.addEventListener("pointercancel", stopSeeking);
+
+    return () => {
+      window.removeEventListener("pointerup", stopSeeking);
+      window.removeEventListener("pointercancel", stopSeeking);
+    };
+  });
 
   return (
     <div className="music-player">
       <audio
+        key={song.Id}
         ref={audioRef}
+        autoPlay
         onLoadedMetadata={(event) => {
           setDuration(event.currentTarget.duration);
         }}
-        onTimeUpdate={(event) => {
-          setCurrentTime(event.currentTarget.currentTime);
-        }}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
+        onEnded={() => {
+          setIsPlaying(false);
+          onNext();
+        }}
         onError={(event) => {
           const audio = event.currentTarget;
 
@@ -71,6 +84,11 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           console.log("Audio error:", audio.error);
           console.log("Network state:", audio.networkState);
           console.log("Ready state:", audio.readyState);
+        }}
+        onTimeUpdate={(event) => {
+          if (!isSeeking) {
+            setCurrentTime(event.currentTarget.currentTime);
+          }
         }}
         src={`http://localhost:3000/api/media/${song.Id}/stream`}
       ></audio>
@@ -114,14 +132,15 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           className="slider"
           min={0}
           max={duration || 0}
+          step={0.1}
           value={currentTime}
+          onPointerDown={() => setIsSeeking(true)}
           onChange={(event) => {
             const time = Number(event.target.value);
-
+            setCurrentTime(time);
             if (audioRef.current) {
               audioRef.current.currentTime = time;
             }
-            setCurrentTime(time);
           }}
         ></input>
       </div>

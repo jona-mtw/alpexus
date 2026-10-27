@@ -5,6 +5,7 @@ type Song = {
   Id: string;
   Name: string;
   Artists: string[];
+  AlbumId?: string;
 };
 
 type MusicTrackProps = {
