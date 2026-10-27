@@ -5,6 +5,7 @@ type Song = {
   Id: string;
   Name: string;
   Artists: string[];
+  AlbumId?: string;
 };
 
 type MusicPlayerProps = {
@@ -18,6 +19,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [hasImage, setHasImage] = useState(true);
 
   function togglePause() {
     const audio = audioRef.current;
@@ -74,15 +76,24 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
       ></audio>
       <div className="music-details-wrapper">
         <div className="cover-art">
-          <img
-            src={`http://localhost:3000/api/media/${song.Id}/cover`}
-            alt="hello"
-            className="album-cover"
-            onError={(e) => {
-              const img = e.currentTarget;
-              img.src = "http://localhost:5173/alpexus/placeholder.png";
-            }}
-          />
+          {hasImage ? (
+            <img
+              className="album-cover"
+              src={`http://localhost:3000/api/media/${song.Id}/cover`}
+              alt={song.Name}
+              onLoad={() => setHasImage(true)}
+              onError={() => setHasImage(false)}
+            />
+          ) : (
+            <img
+              className="album-cover"
+              src={`http://localhost:3000/api/media/${song.AlbumId}/cover`}
+              onError={(e) => {
+                const img = e.currentTarget;
+                img.src = "http://localhost:5173/alpexus/placeholder.png";
+              }}
+            />
+          )}
         </div>
         <div className="music-details">
           <h4 className="song-name">{song.Name}</h4>

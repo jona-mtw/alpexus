@@ -1,9 +1,17 @@
 import "./music.css";
 import MusicTrack from "./media-components/music-track";
 import MusicPlayer from "./media-components/music-player";
+import AlbumViewer from "./media-components/album";
 import { useState, useEffect } from "react";
 
 type Song = {
+  Id: string;
+  Name: string;
+  Artists: string[];
+  AlbumId?: string;
+};
+
+type Album = {
   Id: string;
   Name: string;
   Artists: string[];
@@ -12,18 +20,23 @@ type Song = {
 function Music() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [songIndex, setSongIndex] = useState(0);
+  const [albums, setAlbums] = useState<Album[]>([]);
 
   useEffect(() => {
     async function fetchMusicInfo() {
-      const response = await fetch("http://localhost:3000/api/media/songs");
-      const data = await response.json();
-      setSongs(data);
+      const [songResponse, albumsResponse] = await Promise.all([
+        fetch("http://localhost:3000/api/media/songs"),
+        fetch("http://localhost:3000/api/media/albums"),
+      ]);
+      const songsData = await songResponse.json();
+      const albumsData = await albumsResponse.json();
+      setSongs(songsData);
+      setAlbums(albumsData);
     }
     fetchMusicInfo();
   }, []);
 
   const song = songs[songIndex];
-  const albums = async () => (await fetch("http://localhost:3000/api/media/albums")).json;
 
   return (
     <div className="music">
@@ -32,7 +45,11 @@ function Music() {
         {albums.length > 0 ? (
           <>
             <h2>Albums</h2>
-            <div className="albums"></div>
+            <div className="albums">
+              {albums.map((album) => (
+                <AlbumViewer album={album} />
+              ))}
+            </div>
           </>
         ) : null}
         <h2>Tracks</h2>

@@ -189,7 +189,9 @@ async function getMediaItems(includeItemTypes: string) {
   return data.Items ?? [];
 }
 
-function mediaItemsHandler(includeItemTypes: string = "Audio,Movie,Episode,Video,MusicVideo") {
+function mediaItemsHandler(
+  includeItemTypes: string = "Audio,Movie,Series,Episode,Video,MusicVideo",
+) {
   return async (_req: Request, res: Response) => {
     try {
       res.json(await getMediaItems(includeItemTypes));
@@ -208,6 +210,12 @@ app.get("/api/media", mediaItemsHandler());
 app.get("/api/media/songs", mediaItemsHandler("Audio"));
 
 app.get("/api/media/albums", mediaItemsHandler("MusicAlbum"));
+
+app.get("/api/media/movies", mediaItemsHandler("Movie"));
+
+app.get("/api/media/tv-shows", mediaItemsHandler("Series"));
+
+app.get("/api/media/episodes", mediaItemsHandler("Episode"));
 
 app.get("/api/media/:itemId/stream", async (req, res) => {
   const { itemId } = req.params;
