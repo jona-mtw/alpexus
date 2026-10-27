@@ -21,6 +21,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
   const [duration, setDuration] = useState(0);
   const [hasImage, setHasImage] = useState(true);
   const [isSeeking, setIsSeeking] = useState(false);
+  const isSeekingRef = useRef(false);
 
   function togglePause() {
     const audio = audioRef.current;
@@ -40,16 +41,15 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
   console.log(audioRef.current?.error);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
+    isSeekingRef.current = false;
   }, [song.Id]);
 
   useEffect(() => {
     function stopSeeking() {
+      isSeekingRef.current = false;
       setIsSeeking(false);
     }
 
@@ -86,7 +86,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           console.log("Ready state:", audio.readyState);
         }}
         onTimeUpdate={(event) => {
-          if (!isSeeking) {
+          if (!isSeekingRef.current) {
             setCurrentTime(event.currentTarget.currentTime);
           }
         }}
@@ -134,13 +134,20 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           max={duration || 0}
           step={0.1}
           value={currentTime}
-          onPointerDown={() => setIsSeeking(true)}
+          onPointerDown={() => {
+            isSeekingRef.current = true;
+            setIsSeeking(true);
+          }}
           onChange={(event) => {
             const time = Number(event.target.value);
             setCurrentTime(time);
             if (audioRef.current) {
               audioRef.current.currentTime = time;
             }
+          }}
+          onPointerUp={() => {
+            isSeekingRef.current = false;
+            setIsSeeking(false);
           }}
         ></input>
       </div>

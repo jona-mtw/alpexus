@@ -218,54 +218,84 @@ app.get("/api/media/tv-shows", mediaItemsHandler("Series"));
 app.get("/api/media/episodes", mediaItemsHandler("Episode"));
 
 app.get("/api/media/:itemId/stream", async (req, res) => {
-  const { itemId } = req.params;
-  const type = req.query.type === "video" ? "video" : "audio";
+  try {
+    const { itemId } = req.params;
+    const type = req.query.type === "video" ? "video" : "audio";
 
-  const endpoint =
-    type === "video"
-      ? `/Videos/${encodeURIComponent(itemId)}/stream`
-      : `/Audio/${encodeURIComponent(itemId)}/stream`;
+    const endpoint =
+      type === "video"
+        ? `/Videos/${encodeURIComponent(itemId)}/stream`
+        : `/Audio/${encodeURIComponent(itemId)}/stream`;
 
-  const response = await fetchJellyfin(
-    endpoint,
-    req.headers.range ? { Range: req.headers.range } : {},
-  );
+    const response = await fetchJellyfin(
+      endpoint,
+      req.headers.range ? { Range: req.headers.range } : {},
+    );
 
-  if (!response.ok || !response.ok) {
-    res.sendStatus(response.status || 502);
-    return;
-  }
-
-  response.headers.forEach((value, key) => {
-    if (
-      ["content-type", "content-length", "content-range", "accept-ranges"].includes(
-        key.toLowerCase(),
-      )
-    ) {
-      res.setHeader(key, value);
+    if (!response.ok || !response.body) {
+      res.sendStatus(response.ok ? 502 : response.status);
+      return;
     }
-  });
 
-  res.status(response.status);
-  Readable.fromWeb(response.body as import("node:stream/web").ReadableStream).pipe(res);
+    for (const header of ["content-type", "content-length", "content-range", "accept-ranges"]) {
+      const value = response.headers.get(header);
+
+      if (value) res.setHeader(header, value);
+    }
+
+    res.status(response.status);
+
+    const stream = Readable.fromWeb(response.body as import("node:stream/web").ReadableStream);
+    stream.on("error", (error) => {
+      console.error("Jellyfin stream error: ", error);
+      if (!res.headersSent) {
+        res.status(502);
+      }
+      res.destroy(error);
+    });
+    stream.pipe(res);
+  } catch (error) {
+    console.error("Failed to stream media: ", error);
+
+    if (!res.headersSent) {
+      res.status(502);
+    }
+    res.destroy();
+  }
 });
 
 app.get("/api/media/:itemId/cover", async (req, res) => {
-  const { itemId } = req.params;
-  const endpoint = `/Items/${itemId}/Images/Primary`;
+  try {
+    const { itemId } = req.params;
+    const endpoint = `/Items/${encodeURIComponent(itemId)}/Images/Primary`;
 
-  const response = await fetchJellyfin(endpoint);
+    const response = await fetchJellyfin(endpoint);
 
-  if (!response.ok || !response.body) {
-    res.sendStatus(response.status || 404);
-    return;
+    if (!response.ok || !response.body) {
+      res.sendStatus(response.ok ? 502 : response.status);
+      return;
+    }
+
+    res.setHeader("Content-Type", response.headers.get("content-type") || "image/jpeg");
+
+    const stream = Readable.fromWeb(response.body as import("node:stream/web").ReadableStream);
+    stream.on("error", (error) => {
+      console.error("Jellyfin cover stream error:", error);
+      res.destroy(error);
+    });
+
+    stream.pipe(res);
+  } catch (error) {
+    console.error("Failed to fetch cover:", error);
+
+    if (!res.headersSent) {
+      res.sendStatus(502);
+    } else {
+      res.destroy();
+    }
   }
-
-  res.setHeader("Content-Type", response.headers.get("content-type") || "image/jpeg");
-
-  res.status(response.status);
-  Readable.fromWeb(response.body as import("node:stream/web").ReadableStream).pipe(res);
 });
+
 //#endregion
 
 app.listen(PORT, () => {
