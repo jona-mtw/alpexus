@@ -65,6 +65,9 @@ function Music() {
         ) : (
           (() => {
             const album = albums[page];
+            if (!album) {
+              return <p>Album not found.</p>;
+            }
             return (
               <>
                 <div className="album-header">
@@ -88,11 +91,11 @@ function Music() {
                     .filter((song) => song.AlbumId === album.Id)
                     .map((song) => (
                       <MusicTrack
+                        key={song.Id}
                         song={song}
                         onClick={() => {
-                          songs.map((allsong, index) => {
-                            allsong.Id === song.Id ? setSongIndex(index) : null;
-                          });
+                          const index = songs.findIndex((allsong) => allsong.Id === song.Id);
+                          if (index !== -1) setSongIndex(index);
                         }}
                       />
                     ))}
@@ -102,11 +105,13 @@ function Music() {
           })()
         )}
       </div>
-      <MusicPlayer
-        song={song}
-        onNext={() => setSongIndex((current) => (current + 1) % songs.length)}
-        onPrevious={() => setSongIndex((current) => (current - 1 + songs.length) % songs.length)}
-      />
+      {song && (
+        <MusicPlayer
+          song={song}
+          onNext={() => setSongIndex((current) => (current + 1) % songs.length)}
+          onPrevious={() => setSongIndex((current) => (current - 1 + songs.length) % songs.length)}
+        />
+      )}
     </div>
   );
 }
