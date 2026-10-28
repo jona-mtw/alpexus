@@ -36,7 +36,7 @@ function MusicTrack({ song, onClick }: MusicTrackProps) {
         />
       )}
       <div className="song-wrapper">
-        <h3 className="song-name">{song.Name}</h3>
+        <h2 className="song-name">{song.Name}</h2>
         <p className="song-artist">{song.Artists || "Unknown Artist"}</p>
       </div>
     </div>
