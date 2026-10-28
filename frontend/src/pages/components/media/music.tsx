@@ -2,7 +2,6 @@ import "./music.css";
 import MusicTrack from "./media-components/music-track";
 import MusicPlayer from "./media-components/music-player";
 import AlbumViewer from "./media-components/album-viewer";
-import Album from "./media-components/album";
 import { useState, useEffect } from "react";
 
 type Song = {
@@ -64,21 +63,50 @@ function Music() {
             </div>
           </>
         ) : (
-          <Album
-            album={albums[page]}
-            songs={songs}
-            onReturn={() => setPage(-1)}
-            onClick={() => {}}
-          />
+          (() => {
+            const album = albums[page];
+            return (
+              <>
+                <div className="album-header">
+                  <div className="album-title">
+                    <i className="fa-solid fa-xmark return-album" onClick={() => setPage(-1)}></i>
+                    <h2>{album.Name}</h2>
+                    <h4>{album.Artists[0]}</h4>
+                  </div>
+                  <img
+                    src={`http://localhost:3000/api/media/${album.Id}/cover`}
+                    alt=""
+                    id="album-cover-header"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      img.src = `http://localhost:5173/alpexus/placeholder.png`;
+                    }}
+                  />
+                </div>
+                <div className="tracks">
+                  {songs
+                    .filter((song) => song.AlbumId === album.Id)
+                    .map((song) => (
+                      <MusicTrack
+                        song={song}
+                        onClick={() => {
+                          songs.map((allsong, index) => {
+                            allsong.Id === song.Id ? setSongIndex(index) : null;
+                          });
+                        }}
+                      />
+                    ))}
+                </div>
+              </>
+            );
+          })()
         )}
       </div>
-      {song && (
-        <MusicPlayer
-          song={song}
-          onNext={() => setSongIndex((current) => (current + 1) % songs.length)}
-          onPrevious={() => setSongIndex((current) => (current - 1 + songs.length) % songs.length)}
-        />
-      )}
+      <MusicPlayer
+        song={song}
+        onNext={() => setSongIndex((current) => (current + 1) % songs.length)}
+        onPrevious={() => setSongIndex((current) => (current - 1 + songs.length) % songs.length)}
+      />
     </div>
   );
 }
