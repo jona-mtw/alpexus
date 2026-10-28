@@ -2,6 +2,7 @@ import "./music.css";
 import MusicTrack from "./media-components/music-track";
 import MusicPlayer from "./media-components/music-player";
 import AlbumViewer from "./media-components/album";
+import { AlbumDetail } from "./media-components/album";
 import { useState, useEffect } from "react";
 
 type Song = {
@@ -21,6 +22,7 @@ function Music() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [songIndex, setSongIndex] = useState(0);
   const [albums, setAlbums] = useState<Album[]>([]);
+  const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
 
   useEffect(() => {
     async function fetchMusicInfo() {
@@ -42,22 +44,40 @@ function Music() {
     <div className="music">
       <div className="music-info">
         <h1>Music</h1>
-        {albums.length > 0 ? (
+        {selectedAlbum ? (
+          <AlbumDetail
+            album={selectedAlbum}
+            songs={songs}
+            onReturn={() => setSelectedAlbum(null)}
+            onSongClick={(songId) => {
+              const index = songs.findIndex((track) => track.Id === songId);
+              if (index !== -1) setSongIndex(index);
+            }}
+          />
+        ) : (
           <>
-            <h2>Albums</h2>
-            <div className="albums">
-              {albums.map((album) => (
-                <AlbumViewer album={album} />
+            {albums.length > 0 && (
+              <>
+                <h2>Albums</h2>
+                <div className="albums">
+                  {albums.map((album) => (
+                    <AlbumViewer
+                      key={album.Id}
+                      album={album}
+                      onClick={() => setSelectedAlbum(album)}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+            <h2>Tracks</h2>
+            <div className="tracks">
+              {songs.map((song, index) => (
+                <MusicTrack key={song.Id} song={song} onClick={() => setSongIndex(index)} />
               ))}
             </div>
           </>
-        ) : null}
-        <h2>Tracks</h2>
-        <div className="tracks">
-          {songs.map((song, index) => (
-            <MusicTrack key={song.Id} song={song} onClick={() => setSongIndex(index)} />
-          ))}
-        </div>
+        )}
       </div>
       {song && (
         <MusicPlayer
