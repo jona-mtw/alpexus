@@ -1,7 +1,8 @@
 import "./music.css";
 import MusicTrack from "./media-components/music-track";
 import MusicPlayer from "./media-components/music-player";
-import AlbumViewer from "./media-components/album";
+import AlbumViewer from "./media-components/album-viewer";
+import Album from "./media-components/album";
 import { useState, useEffect } from "react";
 
 type Song = {
@@ -21,6 +22,7 @@ function Music() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [songIndex, setSongIndex] = useState(0);
   const [albums, setAlbums] = useState<Album[]>([]);
+  const [page, setPage] = useState(-1);
 
   useEffect(() => {
     async function fetchMusicInfo() {
@@ -41,23 +43,34 @@ function Music() {
   return (
     <div className="music">
       <div className="music-info">
-        <h1>Music</h1>
-        {albums.length > 0 ? (
+        {page === -1 ? (
           <>
-            <h2>Albums</h2>
-            <div className="albums">
-              {albums.map((album) => (
-                <AlbumViewer album={album} />
+            <h1>Music</h1>
+            {albums.length > 0 ? (
+              <>
+                <h2>Albums</h2>
+                <div className="albums">
+                  {albums.map((album, index) => (
+                    <AlbumViewer album={album} onClick={() => setPage(index)} />
+                  ))}
+                </div>
+              </>
+            ) : null}
+            <h2>Tracks</h2>
+            <div className="tracks">
+              {songs.map((song, index) => (
+                <MusicTrack key={song.Id} song={song} onClick={() => setSongIndex(index)} />
               ))}
             </div>
           </>
-        ) : null}
-        <h2>Tracks</h2>
-        <div className="tracks">
-          {songs.map((song, index) => (
-            <MusicTrack key={song.Id} song={song} onClick={() => setSongIndex(index)} />
-          ))}
-        </div>
+        ) : (
+          <Album
+            album={albums[page]}
+            songs={songs}
+            onReturn={() => setPage(-1)}
+            onClick={() => {}}
+          />
+        )}
       </div>
       {song && (
         <MusicPlayer

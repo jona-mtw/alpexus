@@ -1,0 +1,30 @@
+.album-header {
+	display: flex;
+	width: 100%;
+	i {
+		font-size: 40px;
+	}
+}
+
+.album-title {
+	margin-left: 0;
+	display: flex;
+	flex-direction: column;
+	h2 {
+		display: flex;
+		flex-direction: row;
+	}
+}
+
+#album-cover-header {
+	width: 15em;
+	height: 15em;
+	margin-left: auto;
+	margin-right: 0;
+}
+
+.return-album {
+	margin-bottom: auto;
+	margin-top: 0;
+}
+
