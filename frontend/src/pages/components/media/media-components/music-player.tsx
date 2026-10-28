@@ -21,7 +21,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
   const [duration, setDuration] = useState(0);
   const [hasImage, setHasImage] = useState(true);
   const [isSeeking, setIsSeeking] = useState(false);
-  const isSeekingRef = useRef(false);
+  const seekTimeRef = useRef<number | null>(null);
 
   function togglePause() {
     const audio = audioRef.current;
@@ -37,30 +37,32 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
     console.log("paused");
   }
 
-  console.log(audioRef.current?.currentSrc);
-  console.log(audioRef.current?.error);
-
   useEffect(() => {
     setCurrentTime(0);
     setDuration(0);
     setIsPlaying(false);
-    isSeekingRef.current = false;
   }, [song.Id]);
 
-  useEffect(() => {
-    function stopSeeking() {
-      isSeekingRef.current = false;
-      setIsSeeking(false);
+  // useEffect(() => {
+  //   function stopSeeking() {
+  //     isSeekingRef.current = false;
+  //     setIsSeeking(false);
+  //   }
+
+  //   window.addEventListener("pointerup", stopSeeking);
+  //   window.addEventListener("pointercancel", stopSeeking);
+
+  //   return () => {
+  //     window.removeEventListener("pointerup", stopSeeking);
+  //     window.removeEventListener("pointercancel", stopSeeking);
+  //   };
+  // });
+
+  function updateDuration(audio: HTMLAudioElement) {
+    if (Number.isFinite(audio.duration) && audio.duration > 0) {
+      setDuration(audio.duration);
     }
-
-    window.addEventListener("pointerup", stopSeeking);
-    window.addEventListener("pointercancel", stopSeeking);
-
-    return () => {
-      window.removeEventListener("pointerup", stopSeeking);
-      window.removeEventListener("pointercancel", stopSeeking);
-    };
-  });
+  }
 
   return (
     <div className="music-player">
@@ -68,9 +70,8 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
         key={song.Id}
         ref={audioRef}
         autoPlay
-        onLoadedMetadata={(event) => {
-          setDuration(event.currentTarget.duration);
-        }}
+        onLoadedMetadata={(event) => updateDuration(event.currentTarget)}
+        onDurationChange={(event) => updateDuration(event.currentTarget)}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => {
@@ -86,7 +87,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           console.log("Ready state:", audio.readyState);
         }}
         onTimeUpdate={(event) => {
-          if (!isSeekingRef.current) {
+          if (seekTimeRef.current === null) {
             setCurrentTime(event.currentTarget.currentTime);
           }
         }}
@@ -131,23 +132,37 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           type="range"
           className="slider"
           min={0}
-          max={duration || 0}
+          max={duration > 0 && Number.isFinite(duration) ? duration : 0}
           step={0.1}
-          value={currentTime}
+          value={isSeeking && seekTimeRef.current !== null ? seekTimeRef.current : currentTime}
+          disabled={!Number.isFinite(duration) || duration <= 0}
           onPointerDown={() => {
-            isSeekingRef.current = true;
+            seekTimeRef.current = currentTime;
             setIsSeeking(true);
           }}
           onChange={(event) => {
             const time = Number(event.target.value);
+            seekTimeRef.current = time;
             setCurrentTime(time);
-            if (audioRef.current) {
-              audioRef.current.currentTime = time;
-            }
           }}
           onPointerUp={() => {
-            isSeekingRef.current = false;
+            const audio = audioRef.current;
+            const seekTime = seekTimeRef.current;
+            if (audio && seekTime !== null) {
+              audio.currentTime = seekTime;
+            }
+            seekTimeRef.current = null;
             setIsSeeking(false);
+          }}
+          onPointerCancel={() => {
+            seekTimeRef.current = null;
+            setIsSeeking(false);
+          }}
+          onKeyUp={(event) => {
+            if (event.key.startsWith("Arrow")) {
+              const audio = audioRef.current;
+              if (audio) audio.currentTime = Number(event.currentTarget.value);
+            }
           }}
         ></input>
       </div>
