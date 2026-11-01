@@ -163,7 +163,7 @@ async function fetchJellyfin(endpoint: string, extraHeaders: Record<string, stri
 
   return fetch(`${url}${endpoint}`, {
     headers: {
-      Authorization: `MediaBrowser Token=${apiKey}`,
+      Authorization: `MediaBrowser Token="${apiKey}"`,
       ...extraHeaders,
     },
   });
@@ -179,6 +179,8 @@ async function getMediaItems(includeItemTypes: string) {
   const response = await fetchJellyfin(`/Items?${params}`);
 
   if (!response.ok) {
+    const details = await response.text();
+    console.error(`Jellyfin request failed (${response.status}): `, details);
     throw new Error(`Jellyfin returned status ${response.status}`);
   }
 
@@ -231,6 +233,11 @@ app.get("/api/media/:itemId/stream", async (req, res) => {
       endpoint,
       req.headers.range ? { Range: req.headers.range } : {},
     );
+
+    console.log("Stream type: ", type);
+    console.log("Jellyfin status", response.status);
+    console.log("Content-Type:", response.headers.get("content-type"));
+    console.log("Content-Range:", response.headers.get("content-range"));
 
     if (!response.ok || !response.body) {
       res.sendStatus(response.ok ? 502 : response.status);

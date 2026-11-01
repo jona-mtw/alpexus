@@ -1,8 +1,34 @@
 .movies {
-	display: flex;
-	background: var(--bg);
-	height: 100%;
-	padding: 15px;
-	border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  height: 100%;
+  padding: 15px;
+  border-radius: 15px;
 }
 
+.movie-list {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.movie {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 15px;
+  overflow: hidden;
+}
+
+.movie-cover {
+  height: 35vh;
+}
+
+.movie-name {
+	width: 22vh;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

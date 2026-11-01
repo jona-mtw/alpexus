@@ -21,7 +21,6 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
   const [duration, setDuration] = useState(0);
   const [hasImage, setHasImage] = useState(true);
   const [isSeeking, setIsSeeking] = useState(false);
-  const seekTimeRef = useRef<number | null>(null);
 
   function togglePause() {
     const audio = audioRef.current;
@@ -42,21 +41,6 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
     setDuration(0);
     setIsPlaying(false);
   }, [song.Id]);
-
-  // useEffect(() => {
-  //   function stopSeeking() {
-  //     isSeekingRef.current = false;
-  //     setIsSeeking(false);
-  //   }
-
-  //   window.addEventListener("pointerup", stopSeeking);
-  //   window.addEventListener("pointercancel", stopSeeking);
-
-  //   return () => {
-  //     window.removeEventListener("pointerup", stopSeeking);
-  //     window.removeEventListener("pointercancel", stopSeeking);
-  //   };
-  // });
 
   function updateDuration(audio: HTMLAudioElement) {
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
@@ -87,7 +71,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           console.log("Ready state:", audio.readyState);
         }}
         onTimeUpdate={(event) => {
-          if (seekTimeRef.current === null) {
+          if (!isSeeking) {
             setCurrentTime(event.currentTarget.currentTime);
           }
         }}
@@ -134,37 +118,35 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           min={0}
           max={duration > 0 && Number.isFinite(duration) ? duration : 0}
           step={0.1}
-          value={isSeeking && seekTimeRef.current !== null ? seekTimeRef.current : currentTime}
+          value={currentTime}
           disabled={!Number.isFinite(duration) || duration <= 0}
-          onPointerDown={() => {
-            seekTimeRef.current = currentTime;
-            setIsSeeking(true);
-          }}
           onChange={(event) => {
-            const time = Number(event.target.value);
-            seekTimeRef.current = time;
+            const time = Number(event.currentTarget.value);
             setCurrentTime(time);
           }}
-          onPointerUp={() => {
+          onPointerUp={(event) => {
+            const time = Number(event.currentTarget.value);
             const audio = audioRef.current;
-            const seekTime = seekTimeRef.current;
-            if (audio && seekTime !== null) {
-              audio.currentTime = seekTime;
+            if (audio && Number.isFinite(time)) {
+              audio.currentTime = time;
+              setCurrentTime(time);
             }
-            seekTimeRef.current = null;
             setIsSeeking(false);
           }}
-          onPointerCancel={() => {
-            seekTimeRef.current = null;
-            setIsSeeking(false);
-          }}
+          onPointerDown={() => setIsSeeking(true)}
+          onPointerCancel={() => setIsSeeking(false)}
           onKeyUp={(event) => {
             if (event.key.startsWith("Arrow")) {
+              const time = Number(event.currentTarget.value);
               const audio = audioRef.current;
-              if (audio) audio.currentTime = Number(event.currentTarget.value);
+
+              if (audio && Number.isFinite(time)) {
+                audio.currentTime = time;
+                setCurrentTime(time);
+              }
             }
           }}
-        ></input>
+        />
       </div>
       <div className="placeholder-wrapper"></div>
     </div>

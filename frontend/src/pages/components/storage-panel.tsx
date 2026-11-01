@@ -12,7 +12,7 @@ type DirectoryEntry = {
 };
 
 function formatSize(sizeBytes: number): string {
-  let units = ["B", "KB", "MB", "GB"];
+  const units = ["B", "KB", "MB", "GB"];
   let outputUnit: string = "B";
 
   for (const unit of units) {
@@ -45,9 +45,9 @@ function StorageContainer() {
     async function fetchStorageSize() {
       const response = await fetch(`http://localhost:3000/api/files?path=`);
       const files = await response.json();
-      setTotalSize(files.reduce((total: number, file: DirectoryEntry) => (total += file.size), 0));
+      setTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
       setTotalFileNo(
-        files.reduce((total: number, file: DirectoryEntry) => (total += file.fileNo), 0),
+        files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0),
       );
     }
 
@@ -61,8 +61,8 @@ function StorageContainer() {
           `http://localhost:3000/api/files?fileType=${imgFileExtension}`,
         );
         const files = await response.json();
-        totalSize += files.reduce((total: number, file: DirectoryEntry) => (total += file.size), 0);
-        fileNo += files.reduce((total: number, file: DirectoryEntry) => (total += file.fileNo), 0);
+        totalSize += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
+        fileNo += files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0);
       }
 
       setImgTotalSize(totalSize);
@@ -79,8 +79,8 @@ function StorageContainer() {
           `http://localhost:3000/api/files?fileType=${docFileExtension}`,
         );
         const files = await response.json();
-        totalSize += files.reduce((total: number, file: DirectoryEntry) => (total += file.size), 0);
-        fileNo += files.reduce((total: number, file: DirectoryEntry) => (total += file.fileNo), 0);
+        totalSize += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
+        fileNo += files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0);
       }
 
       setDocTotalSize(totalSize);
@@ -97,8 +97,8 @@ function StorageContainer() {
           `http://localhost:3000/api/files?fileType=${mediaFileExtension}`,
         );
         const files = await response.json();
-        totalSize += files.reduce((total: number, file: DirectoryEntry) => (total += file.size), 0);
-        fileNo += files.reduce((total: number, file: DirectoryEntry) => (total += file.fileNo), 0);
+        totalSize += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
+        fileNo += files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0);
       }
 
       setMediaTotalSize(totalSize);

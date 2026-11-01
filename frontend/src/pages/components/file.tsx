@@ -68,7 +68,7 @@ function getIcon(file: FileProps) {
 }
 
 function formatSize(sizeBytes: number): string {
-  let units = ["B", "KB", "MB", "GB"];
+  const units = ["B", "KB", "MB", "GB"];
   let outputUnit: string = "B";
 
   for (const unit of units) {
