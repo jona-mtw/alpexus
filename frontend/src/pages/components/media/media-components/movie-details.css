@@ -28,6 +28,9 @@
 	padding: 15px;
 	padding-top: 0;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 }
 
+video {
+	width: 100%;
+}

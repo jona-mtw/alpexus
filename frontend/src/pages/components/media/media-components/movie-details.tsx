@@ -36,8 +36,10 @@ function MovieDetails({ movie, onReturn }: MovieProps) {
         />
         <div className="movie-description">
           <p>{movie.Overview}</p>
+          <i className="fa-solid fa-play"></i>
         </div>
       </div>
+      <video controls src={`http://localhost:3000/api/media/${movie.Id}/stream?type=video`}></video>
     </div>
   );
 }
