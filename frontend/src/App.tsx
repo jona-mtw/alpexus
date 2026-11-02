@@ -4,8 +4,6 @@ import "./App.css";
 import Home from "./pages/home.tsx";
 import Files from "./pages/files.tsx";
 import Media from "./pages/media.tsx";
-import Notes from "./pages/notes.tsx";
-import Passwords from "./pages/passwords.tsx";
 import Settings from "./pages/settings.tsx";
 
 import StorageContainer from "./pages/components/storage-panel.tsx";
@@ -20,7 +18,7 @@ function EmptySidebar() {
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const pages: React.ComponentType[] = [Passwords, Notes, Media, Settings];
+  const pages: React.ComponentType[] = [Media, Settings];
   const [pageNo, setPageNo] = useState(0);
   const ActivePage = pages[pageNo - 2];
 
@@ -69,28 +67,6 @@ function App() {
             <span
               onClick={() => {
                 setPageNo(2);
-                setSidebarNo(1);
-              }}
-            >
-              <i className="fa-solid fa-lock fa-xl"></i>
-              <p className="nav-bar-text">passwords</p>
-            </span>
-          </li>
-          <li className="nav-bar-link">
-            <span
-              onClick={() => {
-                setPageNo(3);
-                setSidebarNo(1);
-              }}
-            >
-              <i className="fa-solid fa-note-sticky fa-xl"></i>
-              <p className="nav-bar-text">notes</p>
-            </span>
-          </li>
-          <li className="nav-bar-link">
-            <span
-              onClick={() => {
-                setPageNo(4);
                 setSidebarNo(1);
               }}
             >

@@ -5,10 +5,11 @@ import MovieDetails from "./media-components/movie-details";
 type Movie = {
   Id: string;
   Name: string;
-  PremierDate: string;
+  PremiereDate: string;
   Overview: string;
-  Genres: string;
+  Genres: string[];
   CommunityRating: string;
+  RunTimeTicks: number;
 };
 
 function Movies() {
