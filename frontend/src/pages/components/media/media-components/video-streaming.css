@@ -1,7 +1,38 @@
 .video-streaming {
-	
+  position: absolute;
+  width: 100vw - 15px;
+  height: 100vh - 15px;
+  background-color: var(--bg);
+  inset: 0;
+  z-index: 1000;
+  padding: 15px;
 }
 
-.hellopoppy {
-	color: aqua;
+.video-streaming-header {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.video-streaming-body {
+  display: flex;
+  gap: 15px;
+}
+
+.video-controls {
+	background: var(--panel-bg);
+	padding: 5px;
+	border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+	align-items: center;
+  .movie-cover {
+		margin-top: 13%;
+		height: auto;
+		width: 75%;
+		object-fit: contain;
+  }
+}
+
+video.streamed-video {
+  width: 75vw;
 }

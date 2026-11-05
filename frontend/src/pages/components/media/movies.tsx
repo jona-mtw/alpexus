@@ -8,7 +8,7 @@ type Movie = {
   PremiereDate: string;
   Overview: string;
   Genres: string[];
-  CommunityRating: string;
+  CommunityRating: number;
   RunTimeTicks: number;
 };
 

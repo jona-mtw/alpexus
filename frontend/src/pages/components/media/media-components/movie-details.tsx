@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./movie-details.css";
 import VideoPlayer from "./video-streaming";
+import EpisodeViewer from "./episode-details";
 
 type Movie = {
   Id: string;
@@ -8,17 +9,44 @@ type Movie = {
   PremiereDate: string;
   Overview: string;
   Genres: string[];
-  CommunityRating: string;
+  CommunityRating: number;
   RunTimeTicks: number;
+};
+
+type Episode = {
+  Id: string;
+  Name: string;
+  PremiereDate: string;
+  Overview: string;
+  Genres: string[];
+  CommunityRating: number;
+  RunTimeTicks: number;
+  SeriesName: string;
+  IndexNumber: number;
+  ParentIndexNumber: number;
 };
 
 type MovieProps = {
   movie: Movie;
   onReturn: () => void;
+  isTvShow?: boolean;
 };
 
-function MovieDetails({ movie, onReturn }: MovieProps) {
+function MovieDetails({ movie, onReturn, isTvShow = false }: MovieProps) {
   const [showPlayer, setShowPlayer] = useState(false);
+  const [episodeData, setEpisodeData] = useState<Episode[]>([]);
+  const [selectedEpsiode, setSelectedEpisode] = useState<Episode | null>(null);
+
+  useEffect(() => {
+    if (!isTvShow) return;
+    async function fetchEpisodeInfo() {
+      const episodeResponse = await fetch("http://localhost:3000/api/media/episodes");
+      const episodeData = await episodeResponse.json();
+      setEpisodeData(episodeData);
+    }
+    fetchEpisodeInfo();
+  }, [isTvShow]);
+
   function formatRuntimeTicks(ticks: number) {
     ticks /= 10_000_000;
     let time = "";
@@ -40,42 +68,81 @@ function MovieDetails({ movie, onReturn }: MovieProps) {
 
   return (
     <div className="movie-details">
-      <div className="movie-details-left-wrapper">
-        <div className="play-video" onClick={() => setShowPlayer(true)}>
-          <img
-            className="movie-cover"
-            src={`http://localhost:3000/api/media/${movie.Id}/cover`}
-            alt=""
-            onError={(e) => {
-              const img = e.currentTarget;
-              img.src = `http://localhost:5173/alpexus/placeholder.png`;
-            }}
-          />
-          <i className="fa-solid fa-play"></i>
-          <p>PLAY</p>
-        </div>
-      </div>
-      <div className="movie-details-right-wrapper">
-        <div className="movie-details-header">
-          <h1>{movie.Name}</h1>
-          <i className="fa-solid fa-xmark return-movie" onClick={onReturn}></i>
-        </div>
-        <div className="movie-info">
-          <p>{String(new Date(movie.PremiereDate).getFullYear())}</p>
-          <p>
-            <i className="fa-solid fa-star"></i>
-            {Math.round(Number(movie.CommunityRating) * 10) / 10}
-          </p>
-          <p>{formatRuntimeTicks(movie.RunTimeTicks)}</p>
-          <div className="movie-genres">
-            {movie.Genres.map((genre) => {
-              return <p className="movie-genre">{genre}</p>;
-            })}
+      <div className="movie-details-header">
+        <div className="movie-details-left-wrapper">
+          <div className="play-video" onClick={() => setShowPlayer(true)}>
+            <img
+              className="movie-cover"
+              src={`http://localhost:3000/api/media/${movie.Id}/cover`}
+              alt=""
+              onError={(e) => {
+                const img = e.currentTarget;
+                img.src = `http://localhost:5173/alpexus/placeholder.png`;
+              }}
+            />
+            {!isTvShow ? (
+              <>
+                <i className="fa-solid fa-play"></i>
+                <p>PLAY</p>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
-        <p>{movie.Overview}</p>
+        <div className="movie-details-right-wrapper">
+          <div className="movie-details-header">
+            <h1>{movie.Name}</h1>
+            <i className="fa-solid fa-xmark return-movie" onClick={onReturn}></i>
+          </div>
+          <div className="movie-info">
+            <p>{String(new Date(movie.PremiereDate).getFullYear())}</p>
+            <p>
+              <i className="fa-solid fa-star"></i>
+              {Math.round(Number(movie.CommunityRating) * 10) / 10}
+            </p>
+            <p>{formatRuntimeTicks(movie.RunTimeTicks)}</p>
+            <div className="movie-genres">
+              {movie.Genres.map((genre) => {
+                return <p className="movie-genre">{genre}</p>;
+              })}
+            </div>
+          </div>
+          <p>{movie.Overview}</p>
+        </div>
+        {showPlayer && !isTvShow && (
+          <VideoPlayer movie={movie} onReturn={() => setShowPlayer(false)} />
+        )}
       </div>
-      {showPlayer && <VideoPlayer />}
+      {isTvShow && (
+        <>
+          <h1>Episodes</h1>
+          <div className="episode-list">
+            {episodeData.map((episode) => {
+              if (episode.SeriesName == movie.Name) {
+                return (
+                  <EpisodeViewer
+                    episode={episode}
+                    onClick={() => {
+                      setShowPlayer(true);
+                      setSelectedEpisode(episode);
+                    }}
+                  />
+                );
+              }
+            })}
+            {showPlayer && selectedEpsiode && (
+              <VideoPlayer
+                movie={selectedEpsiode}
+                onReturn={() => {
+                  setShowPlayer(false);
+                }}
+                isTvShow={true}
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

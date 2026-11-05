@@ -30,22 +30,6 @@ function RecentActivityPanel(props: {
   );
 }
 
-function Note(props: { name: string; description: string; date: string }) {
-  return (
-    <>
-      <div className="individual-file with-bg">
-        <div className="individual-file-left-wrapper">
-          <p className="file-name">{props.name}</p>
-          <div className="individual-file-left-wrapper-bottom">
-            <p className="file-type">{props.description}</p>
-          </div>
-        </div>
-        <p className="file-date">{props.date}</p>
-      </div>
-    </>
-  );
-}
-
 type HomeProp = {
   onRecentFileClicked: (path: string) => void;
 };
@@ -65,11 +49,6 @@ function Home({ onRecentFileClicked }: HomeProp) {
       .then((data) => setRecentFiles(data))
       .catch((error) => console.error(error));
   }, []);
-
-  const QuickNotes = [];
-  for (let i: number = 0; i < 5; i++) {
-    QuickNotes.push(<Note key={i} name="hello" description="hellooooooo..." date="14-10-2026" />);
-  }
 
   const Activities = [];
   for (let i: number = 1; i < 6; i++) {
@@ -126,13 +105,6 @@ function Home({ onRecentFileClicked }: HomeProp) {
                   />
                 ))}
               </div>
-            </div>
-            <div className="notes-quick-access panel">
-              <div className="panel-header">
-                <i className="fa-solid fa-note-sticky fa-xl"></i>
-                <h2>Notes</h2>
-              </div>
-              <div className="quick-access-notes-list">{QuickNotes}</div>
             </div>
           </div>
           <div className="recent-activity panel">

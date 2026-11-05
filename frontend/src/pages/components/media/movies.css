@@ -24,6 +24,8 @@
 
 .movie-cover {
   height: 35vh;
+  min-height: 200px;
+  border-radius: 10px;
 }
 
 .movie-name {

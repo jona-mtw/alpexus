@@ -1,13 +1,19 @@
 .movie-details {
   display: flex;
+  flex-direction: column;
   background: var(--bg);
   height: 100%;
   padding: 15px;
   border-radius: 15px;
+  overflow: hidden;
   i {
     font-size: 40px;
     color: white;
   }
+}
+
+.movie-details-header {
+  display: flex;
 }
 
 .play-video {
@@ -16,8 +22,8 @@
 		position: absolute;
 		left: 50%;
 		transform: translateX(-50%);
-		color: rgba(0, 0, 0, 0.614);
-		z-index: 1000000000;
+		color: rgba(255, 255, 255, 0.614);
+		z-index: 10;
 	}
 	i {
 		top: calc(50% - 40px);
@@ -32,7 +38,7 @@
 		color: rgba(0, 0, 0, 0.351);
 	}
 	i, p {
-		color: rgba(0, 0, 0, 0.86);
+		color: rgba(255, 255, 255, 0.86);
 	}
 }
 
@@ -47,6 +53,7 @@
 }
 
 .movie-details-header {
+  margin-bottom: 10px;
   display: flex;
   width: 100%;
 }
@@ -78,4 +85,8 @@
   padding: 1px 5px 2px 5px;
   margin: 0 5px 0 5px;
   border-radius: 20px;
+}
+
+.episode-list {
+  overflow: auto;
 }
