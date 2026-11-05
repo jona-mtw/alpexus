@@ -30,3 +30,34 @@
 		overflow: hidden;
 	}
 }
+
+.upload input[type="file"] {
+  display: none;
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 12px 20px;
+  border-radius: 12px;
+
+  background: #7765E3;
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.upload-button:hover {
+  background: #6552D0;
+}
+
+.upload-button span {
+  font-size: 22px;
+}

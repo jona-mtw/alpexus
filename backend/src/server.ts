@@ -1,9 +1,12 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import multer from "multer";
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import "dotenv/config.js";
 import { Readable } from "node:stream";
+import { randomUUID } from "node:crypto";
+import { error } from "node:console";
 
 const app = express();
 app.use(cors());
@@ -305,6 +308,65 @@ app.get("/api/media/:itemId/cover", async (req, res) => {
 
 //#endregion
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+//#region Upload and Download
+const storage = multer.diskStorage({
+  destination: (_req, _file, callback) => {
+    (async () => {
+      try {
+        const requestedPath = typeof _req.body.path === "string" ? _req.body.path : "";
+        const destinationPath = path.resolve(STORAGE, requestedPath);
+        const storageRoot = await fs.realpath(STORAGE);
+        const realDestination = await fs.realpath(destinationPath);
+        const relativePath = path.relative(storageRoot, realDestination);
+        if (
+          relativePath === ".." ||
+          relativePath.startsWith(`..${path.sep}`) ||
+          path.isAbsolute(relativePath)
+        ) {
+          callback(new Error("Access denied"), "");
+          return;
+        }
+        const stats = await fs.stat(realDestination);
+        if (!stats.isDirectory()) {
+          callback(new Error("Destination is not a folder"), "");
+          return;
+        }
+        callback(null, realDestination);
+      } catch {
+        callback(new Error("Invalid destination folder"), "");
+      }
+    })();
+  },
+
+  filename: (_req, file, callback) => {
+    const extension = path.extname(file.originalname);
+    callback(null, `${randomUUID()}${extension}`);
+  },
 });
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+});
+
+app.post("/api/files/upload", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+  res.json({
+    message: "Upload successful",
+    filename: req.file.filename,
+    originalName: req.file.originalname,
+  });
+});
+//#endregion
+
+async function startServer() {
+  await fs.mkdir(STORAGE, { recursive: true });
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+startServer();

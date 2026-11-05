@@ -102,23 +102,26 @@ function VideoPlayer({ movie, onReturn, isTvShow = false }: VideoPlayerProps) {
           <p>{selectedEpsiode.Overview}</p>
         </div>
       </div>
-      <h1>Episodes</h1>
       {isTvShow ? (
-        <div className="episodes-list">
-          {episodeData.map((episode) => {
-            if ("SeriesName" in movie && episode.SeriesName == movie.SeriesName) {
-              return (
-                <EpisodeViewer
-                  key={episode.Id}
-                  episode={episode}
-                  onClick={() => {
-                    setSelectedEpisode(episode);
-                  }}
-                />
-              );
-            }
-          })}
-        </div>
+        <>
+          {" "}
+          <h1>Episodes</h1>
+          <div className="episodes-list">
+            {episodeData.map((episode) => {
+              if ("SeriesName" in movie && episode.SeriesName == movie.SeriesName) {
+                return (
+                  <EpisodeViewer
+                    key={episode.Id}
+                    episode={episode}
+                    onClick={() => {
+                      setSelectedEpisode(episode);
+                    }}
+                  />
+                );
+              }
+            })}
+          </div>
+        </>
       ) : (
         <></>
       )}
