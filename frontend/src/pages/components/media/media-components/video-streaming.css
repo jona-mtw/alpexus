@@ -1,7 +1,7 @@
 .video-streaming {
   position: absolute;
   width: 100vw - 15px;
-  height: 100vh - 15px;
+  height: 100%;
   background-color: var(--bg);
   inset: 0;
   z-index: 1000;
@@ -20,7 +20,7 @@
 
 .video-controls {
 	background: var(--panel-bg);
-	padding: 5px;
+	padding: 15px;
 	border-radius: 15px;
   display: flex;
   flex-direction: column;
@@ -28,9 +28,19 @@
   .movie-cover {
 		margin-top: 13%;
 		height: auto;
-		width: 75%;
+		width: 100%;
 		object-fit: contain;
   }
+  i {
+    color: rgb(255, 213, 0);
+    font-size: 1em;
+    margin-right: 5px;
+  }
+}
+
+.video-controls-wrapper {
+  display: flex;
+  gap: 15px;
 }
 
 video.streamed-video {

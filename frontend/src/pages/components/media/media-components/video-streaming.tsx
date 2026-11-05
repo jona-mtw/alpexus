@@ -82,7 +82,14 @@ function VideoPlayer({ movie, onReturn, isTvShow = false }: VideoPlayerProps) {
         ></video>
         <div className="video-controls">
           <h2>{selectedEpsiode.Name}</h2>
-          <p>{formatRuntimeTicks(selectedEpsiode.RunTimeTicks)}</p>
+          <div className="video-controls-wrapper">
+            <p>{formatRuntimeTicks(selectedEpsiode.RunTimeTicks)}</p>
+            <p>
+              <i className="fa-solid fa-star"></i>
+              {Math.round(Number(movie.CommunityRating) * 10) / 10}
+            </p>
+          </div>
+
           <img
             className="movie-cover"
             src={`http://localhost:3000/api/media/${selectedEpsiode.Id}/cover`}
@@ -95,6 +102,7 @@ function VideoPlayer({ movie, onReturn, isTvShow = false }: VideoPlayerProps) {
           <p>{selectedEpsiode.Overview}</p>
         </div>
       </div>
+      <h1>Episodes</h1>
       {isTvShow ? (
         <div className="episodes-list">
           {episodeData.map((episode) => {

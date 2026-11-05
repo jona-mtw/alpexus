@@ -1,5 +1,4 @@
 import "./home.css";
-import SearchBar from "./components/search-bar.tsx";
 import File from "./components/file.tsx";
 import { useState, useEffect } from "react";
 
@@ -15,13 +14,24 @@ type DirectoryEntry = {
 
 function RecentActivityPanel(props: {
   title: string;
+  id: string;
   description: string;
   date: string;
-  image: string;
 }) {
+  console.log(props.id);
+  console.log(`http://localhost:3000/api/media/${props.id}/cover`);
   return (
     <>
       <div className="recent-activity-panel">
+        <img
+          className="recommended-bg"
+          src={`http://localhost:3000/api/media/${props.id}/cover`}
+          alt=""
+          onError={(e) => {
+            const img = e.currentTarget;
+            img.src = `http://localhost:5173/alpexus/placeholder.png`;
+          }}
+        />
         <h3>{props.title}</h3>
         <p>{props.date}</p>
         <p>{props.description}</p>
@@ -30,12 +40,20 @@ function RecentActivityPanel(props: {
   );
 }
 
+type MediaInfo = {
+  Id: string;
+  Name: string;
+  Overview: string | null;
+  PremiereDate: string | null;
+};
+
 type HomeProp = {
   onRecentFileClicked: (path: string) => void;
 };
 
 function Home({ onRecentFileClicked }: HomeProp) {
   const [recentFiles, setRecentFiles] = useState<DirectoryEntry[]>([]);
+  const [mediaInfo, setMediaInfo] = useState<MediaInfo[]>([]);
   useEffect(() => {
     fetch("http://localhost:3000/api/files/recent")
       .then((response) => {
@@ -51,14 +69,45 @@ function Home({ onRecentFileClicked }: HomeProp) {
   }, []);
 
   const Activities = [];
-  for (let i: number = 1; i < 6; i++) {
+
+  useEffect(() => {
+    async function fetchMediaInfo() {
+      try {
+        const episodeResponse = await (
+          await fetch("http://localhost:3000/api/media/episodes")
+        ).json();
+
+        const movieResponse = await (await fetch("http://localhost:3000/api/media/movies")).json();
+
+        const musicResponse = await (await fetch("http://localhost:3000/api/media/songs")).json();
+
+        setMediaInfo([...episodeResponse, ...movieResponse, ...musicResponse]);
+      } catch (error) {
+        console.error("Failed to fetch media:", error);
+      }
+    }
+
+    fetchMediaInfo();
+  }, []);
+
+  for (let i = 0; i < 6 && i < mediaInfo.length; i++) {
+    const activity = mediaInfo[Math.floor(Math.random() * mediaInfo.length)];
+
     Activities.push(
       <RecentActivityPanel
-        key={i}
-        title={`Recent Activity ` + i}
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit. "
-        date="10-10-2026"
-        image="hello"
+        key={activity.Name}
+        id={activity.Id}
+        title={activity.Name}
+        description={activity.Overview ?? ""}
+        date={
+          activity.PremiereDate
+            ? new Date(activity.PremiereDate).toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+              })
+            : ""
+        }
       />,
     );
   }
@@ -71,9 +120,6 @@ function Home({ onRecentFileClicked }: HomeProp) {
             <div className="top-row-column">
               <h1>Dashboard</h1>
               <h1 className="greeting">Hello Jonny!</h1>
-            </div>
-            <div className="search-bar-wrapper">
-              <SearchBar />
             </div>
           </div>
           <div className="quick-access">
@@ -108,7 +154,7 @@ function Home({ onRecentFileClicked }: HomeProp) {
             </div>
           </div>
           <div className="recent-activity panel">
-            <h2 className="panel-header">Recent Acitivity</h2>
+            <h2 className="panel-header">Recommended</h2>
             <div className="recent-activity-list">{Activities}</div>
           </div>
         </div>
