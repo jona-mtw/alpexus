@@ -28,6 +28,7 @@ function formatSize(sizeBytes: number): string {
 
 function StorageContainer() {
   const capacity = 2 * 1000 ** 3;
+  const [refresh, setRefresh] = useState(0);
 
   const [totalSize, setTotalSize] = useState(0);
   const [totalFileNo, setTotalFileNo] = useState(0);
@@ -46,9 +47,7 @@ function StorageContainer() {
       const response = await fetch(`http://localhost:3000/api/files?path=`);
       const files = await response.json();
       setTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
-      setTotalFileNo(
-        files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0),
-      );
+      setTotalFileNo(files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0));
     }
 
     async function getTotalImgFilesSize() {
@@ -109,11 +108,11 @@ function StorageContainer() {
     getTotalImgFilesSize();
     getTotalDocumentFilesSize();
     getMediaFilesSize();
-  }, []);
+  }, [refresh]);
 
   return (
     <>
-      <div className="storage-container">
+      <div className="storage-container" onClick={() => setRefresh((previous) => previous + 1)}>
         <h2>Storage</h2>
         <div
           className="storage-gauge"
@@ -173,6 +172,7 @@ function StorageContainer() {
             </p>
           </div>
         </div>
+        <p className="storage-refresh">tap to refresh</p>
       </div>
     </>
   );

@@ -4,11 +4,13 @@ function Settings() {
   return (
     <>
       <div className="settings">
-        <h1>Settings</h1>
         <div className="settings-section">
-          <div className="username">
-            <h2>Username: </h2>
-            <input type="text" />
+          <h1>Settings</h1>
+          <div className="username-wrapper">
+            <label htmlFor="username">
+              <p>Username: </p>
+            </label>
+            <input type="text" name="username" className="username" placeholder="enter name: " />
           </div>
         </div>
       </div>
