@@ -23,6 +23,7 @@
 
 .nav-bar-text {
 	margin: 0;
+	cursor: pointer;
 }
 
 .closed {
@@ -53,13 +54,22 @@ h1 {
 	z-index: 5;
 	margin: 5;
 	margin-bottom: 100px;
+	cursor: pointer;
+	h1 {
+		cursor: pointer;
+	}
 }
 
 .nav-bar-link {
+	cursor: pointer;
     padding-top: 20px;
 		i {
 			padding-top: 20px;
 		}
+}
+
+.fa-solid {
+	cursor: pointer;
 }
 
 #nav-bar-settings {

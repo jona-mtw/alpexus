@@ -33,6 +33,7 @@
 
 .file-name, .file-size, .file-type, .file-date {
 	font-size: 13px;
+	cursor: pointer;
 }
 
 .file-name {
