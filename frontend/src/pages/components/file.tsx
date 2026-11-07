@@ -1,15 +1,5 @@
 import "./file.css";
 
-type FileProps = {
-  name: string;
-  fileType: string;
-  type: "file" | "folder";
-  size: number;
-  date: string;
-  bg?: boolean;
-  onClick?: () => void;
-};
-
 const fileIcons = {
   folder: <i className="fa-solid fa-folder-open"></i>,
   pdf: <i className="fa-solid fa-file-pdf"></i>,
@@ -22,6 +12,17 @@ const fileIcons = {
   zip: <i className="fa-solid fa-file-zipper"></i>,
   code: <i className="fa-solid fa-file-code"></i>,
   otherFile: <i className="fa-solid fa-file"></i>,
+};
+
+type FileProps = {
+  name: string;
+  fileType: string;
+  type: "file" | "folder";
+  size: number;
+  date: string;
+  bg?: boolean;
+  onClick: () => void;
+  onDelete: () => void;
 };
 
 function getIcon(file: FileProps) {
@@ -107,6 +108,19 @@ function File(props: FileProps) {
             </div>
           </div>
         </div>
+        {!props.bg ? (
+          <div
+            className="delete-file"
+            onClick={(event) => {
+              event.stopPropagation();
+              props.onDelete();
+            }}
+          >
+            <i className="fa-solid fa-trash"></i>
+          </div>
+        ) : (
+          <></>
+        )}
         <p className="file-date">
           {new Date(props.date).toLocaleDateString("en-GB", {
             day: "numeric",

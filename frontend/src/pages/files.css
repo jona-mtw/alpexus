@@ -31,6 +31,13 @@
 	}
 }
 
+.files-header {
+	display: flex;
+	flex-direction: row;
+	gap: 15px;
+	margin-top: 5px;
+}
+
 .upload input[type="file"] {
   display: none;
 }
@@ -40,22 +47,18 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-
-  padding: 12px 20px;
-  border-radius: 12px;
-
-  background: #7765E3;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #413c80;
   color: white;
-
   font-size: 15px;
   font-weight: 600;
-
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 1s;
 }
 
 .upload-button:hover {
-  background: #6552D0;
+  background: #7d63de;
 }
 
 .upload-button span {

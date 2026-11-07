@@ -7,6 +7,7 @@ import "dotenv/config.js";
 import { Readable } from "node:stream";
 import { randomUUID } from "node:crypto";
 import { error } from "node:console";
+import { unlink } from "node:fs";
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,30 @@ app.use(express.json());
 
 const PORT = 3000;
 const STORAGE = path.resolve("storage");
+
+async function getSafeStoragePath(relativePath: string) {
+  const root = await fs.realpath(STORAGE);
+  const target = path.resolve(root, relativePath);
+  const relative = path.relative(root, target);
+
+  if (relative === ".." || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) {
+    throw new Error("Access denied");
+  }
+  if (target === root) return root;
+
+  const realParent = await fs.realpath(path.dirname(target));
+  const parentRelative = path.relative(root, realParent);
+
+  if (
+    parentRelative === ".." ||
+    parentRelative.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(parentRelative)
+  ) {
+    throw new Error("Access denied");
+  }
+
+  return path.join(realParent, path.basename(target));
+}
 
 //#region Files
 type FileEntry = {
@@ -308,7 +333,7 @@ app.get("/api/media/:itemId/cover", async (req, res) => {
 
 //#endregion
 
-//#region Upload and Download
+//#region File Manipulation
 const storage = multer.diskStorage({
   destination: (_req, _file, callback) => {
     (async () => {
@@ -359,6 +384,89 @@ app.post("/api/files/upload", upload.single("file"), (req, res) => {
     originalName: req.file.originalname,
   });
 });
+
+// create folder
+app.post("/api/media/folder", async (req, res) => {
+  try {
+    const { path: relativePath, name } = req.body;
+    if (
+      typeof relativePath !== "string" ||
+      typeof name !== "string" ||
+      !name.trim() ||
+      name === "." ||
+      name === ".." ||
+      /[\\/]/.test(name)
+    ) {
+      res.status(400).json({ error: "Invalid folder name or path" });
+      return;
+    }
+
+    const parentPath = await getSafeStoragePath(relativePath);
+    const stats = await fs.stat(parentPath);
+    if (!stats.isDirectory()) {
+      res.status(400).json({ error: "Parent is not a folder" });
+      return;
+    }
+
+    const folderPath = path.join(parentPath, name.trim());
+    await fs.mkdir(folderPath);
+    res.status(201).json({
+      message: "Folder created",
+      name: name.trim(),
+    });
+  } catch (error) {
+    console.error("Folder creation failed:", error);
+    res.status(400).json({ error: "Could not create folder" });
+  }
+});
+
+// delete folder
+app.delete("/api/files/folder", async (req, res) => {
+  try {
+    const { path: relativePath } = req.body;
+    if (typeof relativePath !== "string" || !relativePath.trim()) {
+      res.status(400).json({ error: "Invalid folder path" });
+      return;
+    }
+    const folderPath = await getSafeStoragePath(relativePath);
+    const stats = await fs.lstat(folderPath);
+    if (!stats.isDirectory()) {
+      res.status(400).json;
+      return;
+    }
+    await fs.rm(folderPath, {
+      recursive: true,
+      force: false,
+    });
+    res.json({ message: "Folder deleted" });
+  } catch (error) {
+    console.error("Folder deletion failed:", error);
+    res.status(400).json({ error: "Could not delete folder" });
+  }
+});
+
+// delete file
+app.delete("/api/files", async (req, res) => {
+  try {
+    const { path: relativePath } = req.body;
+    if (typeof relativePath !== "string" || !relativePath.trim()) {
+      res.status(400).json({ error: "Invalid file path" });
+      return;
+    }
+    const filePath = await getSafeStoragePath(relativePath);
+    const stats = await fs.lstat(filePath);
+    if (!stats.isDirectory()) {
+      res.status(400).json;
+      return;
+    }
+    await fs.unlink(filePath);
+    res.json({ message: "File deleted" });
+  } catch (error) {
+    console.error("File deletion failed:", error);
+    res.status(400).json({ error: "Could not delete file" });
+  }
+});
+
 //#endregion
 
 async function startServer() {
