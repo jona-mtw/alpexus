@@ -148,6 +148,7 @@ function Home({ onRecentFileClicked }: HomeProp) {
                             ),
                       );
                     }}
+                    onDelete={() => {}}
                   />
                 ))}
               </div>

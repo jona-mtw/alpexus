@@ -108,7 +108,7 @@ function File(props: FileProps) {
             </div>
           </div>
         </div>
-        {!props.bg ? (
+        {bg ? (
           <div
             className="delete-file"
             onClick={(event) => {

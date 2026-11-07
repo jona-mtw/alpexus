@@ -75,6 +75,17 @@ function App() {
             </span>
           </li>
         </ul>
+        <span
+          className="nav-bar-link"
+          id="nav-bar-settings"
+          onClick={() => {
+            setPageNo(3);
+            setSidebarNo(1);
+          }}
+        >
+          <i className="fa-solid fa-gear fa-xl"></i>
+          <p className="nav-bar-text">settings</p>
+        </span>
       </nav>
       <main>
         {pageNo === 0 ? (
