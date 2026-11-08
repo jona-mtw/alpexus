@@ -5,7 +5,7 @@ import express, { type Request, type Response } from "express";
 import cors from "cors";
 import "dotenv/config.js";
 import { Readable } from "node:stream";
-import { randomUUID, setEngine } from "node:crypto";
+import { randomUUID } from "node:crypto";
 
 const app = express();
 app.use(cors());
@@ -13,7 +13,7 @@ app.use(express.json());
 
 const PORT = 3000;
 const STORAGE = path.resolve("storage");
-const SETTINGS_PATH = path.resolve("settings.json");
+const SETTINGS_PATH = path.resolve(STORAGE, "settings.json");
 
 async function getSafeStoragePath(relativePath: string) {
   const root = await fs.realpath(STORAGE);
@@ -37,6 +37,23 @@ async function getSafeStoragePath(relativePath: string) {
   }
 
   return path.join(realParent, path.basename(target));
+}
+
+async function getSettings(): Promise<Settings> {
+  try {
+    const data = await fs.readFile(SETTINGS_PATH, "utf-8");
+    return JSON.parse(data) as Settings;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") {
+      throw error;
+    }
+    const defaultSettings: Settings = {
+      username: "alpeka",
+      capacity: 2,
+    };
+    await fs.writeFile(SETTINGS_PATH, JSON.stringify(defaultSettings, null, 2));
+    return defaultSettings;
+  }
 }
 
 //#region Files
@@ -172,6 +189,140 @@ app.get("/api/files/recent", async (_req, res) => {
     res.status(500).json({ error: "Failed to fetch recent files" });
   }
 });
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, callback) => {
+    (async () => {
+      try {
+        const requestedPath = typeof _req.body.path === "string" ? _req.body.path : "";
+        const destinationPath = path.resolve(STORAGE, requestedPath);
+        const storageRoot = await fs.realpath(STORAGE);
+        const realDestination = await fs.realpath(destinationPath);
+        const relativePath = path.relative(storageRoot, realDestination);
+        if (
+          relativePath === ".." ||
+          relativePath.startsWith(`..${path.sep}`) ||
+          path.isAbsolute(relativePath)
+        ) {
+          callback(new Error("Access denied"), "");
+          return;
+        }
+        const stats = await fs.stat(realDestination);
+        if (!stats.isFile()) {
+          callback(new Error("Destination is not a folder"), "");
+          return;
+        }
+        callback(null, realDestination);
+      } catch {
+        callback(new Error("Invalid destination folder"), "");
+      }
+    })();
+  },
+
+  filename: (_req, file, callback) => {
+    const extension = path.extname(file.originalname);
+    callback(null, `${randomUUID()}${extension}`);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 100 * 1024 * 1024 },
+});
+
+app.post("/api/files/upload", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+  res.json({
+    message: "Upload successful",
+    filename: req.file.filename,
+    originalName: req.file.originalname,
+  });
+});
+
+// create folder
+app.post("/api/media/folder", async (req, res) => {
+  try {
+    const { path: relativePath, name } = req.body;
+    if (
+      typeof relativePath !== "string" ||
+      typeof name !== "string" ||
+      !name.trim() ||
+      name === "." ||
+      name === ".." ||
+      /[\\/]/.test(name)
+    ) {
+      res.status(400).json({ error: "Invalid folder name or path" });
+      return;
+    }
+
+    const parentPath = await getSafeStoragePath(relativePath);
+    const stats = await fs.stat(parentPath);
+    if (!stats.isDirectory()) {
+      res.status(400).json({ error: "Parent is not a folder" });
+      return;
+    }
+
+    const folderPath = path.join(parentPath, name.trim());
+    await fs.mkdir(folderPath);
+    res.status(201).json({
+      message: "Folder created",
+      name: name.trim(),
+    });
+  } catch (error) {
+    console.error("Folder creation failed:", error);
+    res.status(400).json({ error: "Could not create folder" });
+  }
+});
+
+// delete folder
+app.delete("/api/files/folder", async (req, res) => {
+  try {
+    const { path: relativePath } = req.body;
+    if (typeof relativePath !== "string" || !relativePath.trim()) {
+      res.status(400).json({ error: "Invalid folder path" });
+      return;
+    }
+    const folderPath = await getSafeStoragePath(relativePath);
+    const stats = await fs.lstat(folderPath);
+    if (!stats.isDirectory()) {
+      res.status(400).json;
+      return;
+    }
+    await fs.rm(folderPath, {
+      recursive: true,
+      force: false,
+    });
+    res.json({ message: "Folder deleted" });
+  } catch (error) {
+    console.error("Folder deletion failed:", error);
+    res.status(400).json({ error: "Could not delete folder" });
+  }
+});
+
+// delete file
+app.delete("/api/files", async (req, res) => {
+  try {
+    const { path: relativePath } = req.body;
+    if (typeof relativePath !== "string" || !relativePath.trim()) {
+      res.status(400).json({ error: "Invalid file path" });
+      return;
+    }
+    const filePath = await getSafeStoragePath(relativePath);
+    const stats = await fs.lstat(filePath);
+    if (!stats.isFile()) {
+      res.status(400).json;
+      return;
+    }
+    await fs.unlink(filePath);
+    res.json({ message: "File deleted" });
+  } catch (error) {
+    console.error("File deletion failed:", error);
+    res.status(400).json({ error: "Could not delete file" });
+  }
+});
+
 //#endregion
 
 //#region JellyFin
@@ -332,142 +483,6 @@ app.get("/api/media/:itemId/cover", async (req, res) => {
 
 //#endregion
 
-//#region File Manipulation
-const storage = multer.diskStorage({
-  destination: (_req, _file, callback) => {
-    (async () => {
-      try {
-        const requestedPath = typeof _req.body.path === "string" ? _req.body.path : "";
-        const destinationPath = path.resolve(STORAGE, requestedPath);
-        const storageRoot = await fs.realpath(STORAGE);
-        const realDestination = await fs.realpath(destinationPath);
-        const relativePath = path.relative(storageRoot, realDestination);
-        if (
-          relativePath === ".." ||
-          relativePath.startsWith(`..${path.sep}`) ||
-          path.isAbsolute(relativePath)
-        ) {
-          callback(new Error("Access denied"), "");
-          return;
-        }
-        const stats = await fs.stat(realDestination);
-        if (!stats.isDirectory()) {
-          callback(new Error("Destination is not a folder"), "");
-          return;
-        }
-        callback(null, realDestination);
-      } catch {
-        callback(new Error("Invalid destination folder"), "");
-      }
-    })();
-  },
-
-  filename: (_req, file, callback) => {
-    const extension = path.extname(file.originalname);
-    callback(null, `${randomUUID()}${extension}`);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 100 * 1024 * 1024 },
-});
-
-app.post("/api/files/upload", upload.single("file"), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file uploaded" });
-  }
-  res.json({
-    message: "Upload successful",
-    filename: req.file.filename,
-    originalName: req.file.originalname,
-  });
-});
-
-// create folder
-app.post("/api/media/folder", async (req, res) => {
-  try {
-    const { path: relativePath, name } = req.body;
-    if (
-      typeof relativePath !== "string" ||
-      typeof name !== "string" ||
-      !name.trim() ||
-      name === "." ||
-      name === ".." ||
-      /[\\/]/.test(name)
-    ) {
-      res.status(400).json({ error: "Invalid folder name or path" });
-      return;
-    }
-
-    const parentPath = await getSafeStoragePath(relativePath);
-    const stats = await fs.stat(parentPath);
-    if (!stats.isDirectory()) {
-      res.status(400).json({ error: "Parent is not a folder" });
-      return;
-    }
-
-    const folderPath = path.join(parentPath, name.trim());
-    await fs.mkdir(folderPath);
-    res.status(201).json({
-      message: "Folder created",
-      name: name.trim(),
-    });
-  } catch (error) {
-    console.error("Folder creation failed:", error);
-    res.status(400).json({ error: "Could not create folder" });
-  }
-});
-
-// delete folder
-app.delete("/api/files/folder", async (req, res) => {
-  try {
-    const { path: relativePath } = req.body;
-    if (typeof relativePath !== "string" || !relativePath.trim()) {
-      res.status(400).json({ error: "Invalid folder path" });
-      return;
-    }
-    const folderPath = await getSafeStoragePath(relativePath);
-    const stats = await fs.lstat(folderPath);
-    if (!stats.isDirectory()) {
-      res.status(400).json;
-      return;
-    }
-    await fs.rm(folderPath, {
-      recursive: true,
-      force: false,
-    });
-    res.json({ message: "Folder deleted" });
-  } catch (error) {
-    console.error("Folder deletion failed:", error);
-    res.status(400).json({ error: "Could not delete folder" });
-  }
-});
-
-// delete file
-app.delete("/api/files", async (req, res) => {
-  try {
-    const { path: relativePath } = req.body;
-    if (typeof relativePath !== "string" || !relativePath.trim()) {
-      res.status(400).json({ error: "Invalid file path" });
-      return;
-    }
-    const filePath = await getSafeStoragePath(relativePath);
-    const stats = await fs.lstat(filePath);
-    if (!stats.isDirectory()) {
-      res.status(400).json;
-      return;
-    }
-    await fs.unlink(filePath);
-    res.json({ message: "File deleted" });
-  } catch (error) {
-    console.error("File deletion failed:", error);
-    res.status(400).json({ error: "Could not delete file" });
-  }
-});
-
-//#endregion
-
 //#region Settings
 type Settings = {
   username: string;
@@ -475,25 +490,26 @@ type Settings = {
 };
 
 app.get("/api/settings", async (_req, res) => {
-  try {
-    const settingsText = await fs.readFile(SETTINGS_PATH, "utf-8");
-    const settings: Settings = JSON.parse(settingsText);
-    res.json(settings);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to load settings" });
-  }
+  const settings = await getSettings();
+  res.json(settings);
 });
 
 app.post("/api/settings", async (req, res) => {
   const { username, capacity } = req.body;
 
   try {
-    const settings: Settings = JSON.parse(await fs.readFile(SETTINGS_PATH, "utf-8"));
-    if (typeof username === "string") settings.username = username;
-    if (typeof capacity === "number" && Number.isFinite(capacity)) settings.capacity = capacity;
+    const settings = await getSettings();
+    if (typeof username === "string") {
+      settings.username = username;
+    }
+    if (typeof capacity === "number" && Number.isFinite(capacity)) {
+      settings.capacity = capacity;
+    }
     await fs.writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2));
-    res.json({ message: "Settings saved successfully", settings });
+    res.json({
+      message: "Settings saved successfully",
+      settings,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to save settings" });
@@ -502,11 +518,17 @@ app.post("/api/settings", async (req, res) => {
 //#endregion
 
 async function startServer() {
-  await fs.mkdir(STORAGE, { recursive: true });
-
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  try {
+    await fs.mkdir(STORAGE, { recursive: true });
+    await getSettings();
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+  }
 }
+
+startServer();
 
 startServer();
