@@ -50,10 +50,14 @@ type MediaInfo = {
 type HomeProp = {
   onRecentFileClicked: (path: string) => void;
 };
-
+type Settings = {
+  username: string;
+};
 function Home({ onRecentFileClicked }: HomeProp) {
   const [recentFiles, setRecentFiles] = useState<DirectoryEntry[]>([]);
   const [mediaInfo, setMediaInfo] = useState<MediaInfo[]>([]);
+  const [settings, setSettings] = useState<Settings | null>(null);
+
   useEffect(() => {
     fetch("http://localhost:3000/api/files/recent")
       .then((response) => {
@@ -86,8 +90,14 @@ function Home({ onRecentFileClicked }: HomeProp) {
         console.error("Failed to fetch media:", error);
       }
     }
-
     fetchMediaInfo();
+
+    async function getSettings() {
+      const response = await fetch("http://localhost:3000/api/settings");
+      const data: Settings = await response.json();
+      setSettings(data);
+    }
+    getSettings();
   }, []);
 
   for (let i = 0; i < 6 && i < mediaInfo.length; i++) {
@@ -119,7 +129,7 @@ function Home({ onRecentFileClicked }: HomeProp) {
           <div className="dashboard-top-row">
             <div className="top-row-column">
               <h1>Dashboard</h1>
-              <h1 className="greeting">Hello Jonny!</h1>
+              <h1 className="greeting">{`Hello${settings ? ` ${settings.username}` : ""}!`}</h1>
             </div>
           </div>
           <div className="quick-access">

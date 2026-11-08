@@ -5,9 +5,7 @@ import express, { type Request, type Response } from "express";
 import cors from "cors";
 import "dotenv/config.js";
 import { Readable } from "node:stream";
-import { randomUUID } from "node:crypto";
-import { error } from "node:console";
-import { unlink } from "node:fs";
+import { randomUUID, setEngine } from "node:crypto";
 
 const app = express();
 app.use(cors());
@@ -15,6 +13,7 @@ app.use(express.json());
 
 const PORT = 3000;
 const STORAGE = path.resolve("storage");
+const SETTINGS_PATH = path.resolve("settings.json");
 
 async function getSafeStoragePath(relativePath: string) {
   const root = await fs.realpath(STORAGE);
@@ -467,6 +466,39 @@ app.delete("/api/files", async (req, res) => {
   }
 });
 
+//#endregion
+
+//#region Settings
+type Settings = {
+  username: string;
+  capacity: number;
+};
+
+app.get("/api/settings", async (_req, res) => {
+  try {
+    const settingsText = await fs.readFile(SETTINGS_PATH, "utf-8");
+    const settings: Settings = JSON.parse(settingsText);
+    res.json(settings);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to load settings" });
+  }
+});
+
+app.post("/api/settings", async (req, res) => {
+  const { username, capacity } = req.body;
+
+  try {
+    const settings: Settings = JSON.parse(await fs.readFile(SETTINGS_PATH, "utf-8"));
+    if (typeof username === "string") settings.username = username;
+    if (typeof capacity === "number" && Number.isFinite(capacity)) settings.capacity = capacity;
+    await fs.writeFile(SETTINGS_PATH, JSON.stringify(settings, null, 2));
+    res.json({ message: "Settings saved successfully", settings });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to save settings" });
+  }
+});
 //#endregion
 
 async function startServer() {

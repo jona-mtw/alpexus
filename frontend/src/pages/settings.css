@@ -42,10 +42,20 @@ input[type="text"]:focus {
 	box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
-.username-wrapper {
+.username-wrapper, .capacity-wrapper {
+  margin: 15px;
   display: flex;
   flex-direction: row;
 	align-items: center;
   gap: 15px;
+}
+
+button {
+  background: var(--panel-bg);
+  color: var(--text);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 

@@ -26,8 +26,12 @@ function formatSize(sizeBytes: number): string {
   return `${sizeBytes.toFixed(1)}${outputUnit}`;
 }
 
+type Settings = {
+  capacity: number;
+};
+
 function StorageContainer() {
-  const capacity = 2 * 1000 ** 3;
+  const [settings, setSettings] = useState<Settings>({ capacity: 2 });
   const [refresh, setRefresh] = useState(0);
 
   const [totalSize, setTotalSize] = useState(0);
@@ -110,6 +114,15 @@ function StorageContainer() {
     getMediaFilesSize();
   }, [refresh]);
 
+  useEffect(() => {
+    async function getSettings() {
+      const response = await fetch("http://localhost:3000/api/settings");
+      const data: Settings = await response.json();
+      setSettings(data);
+    }
+    getSettings();
+  });
+
   return (
     <>
       <div className="storage-container" onClick={() => setRefresh((previous) => previous + 1)}>
@@ -118,14 +131,14 @@ function StorageContainer() {
           className="storage-gauge"
           style={{
             background: `conic-gradient(
-              #7765E3 0% ${(totalSize / capacity) * 100}%,
-              #30364B ${(totalSize / capacity) * 100}% 100%
+              #7765E3 0% ${(totalSize / settings.capacity) * 100}%,
+              #30364B ${(totalSize / settings.capacity) * 100}% 100%
             )`,
           }}
         >
           <div className="gauge">
             <h4>{formatSize(totalSize)}</h4>
-            <p>of {formatSize(capacity)} capacity</p>
+            <p>of {formatSize(settings.capacity)} capacity</p>
           </div>
         </div>
         <div className="storage-detailed-info">
