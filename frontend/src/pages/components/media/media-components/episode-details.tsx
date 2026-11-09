@@ -23,7 +23,7 @@ function EpisodeViewer({ episode, onClick }: EpisodeViewerProps) {
     <div className="episode" onClick={onClick}>
       <img
         className="episode-cover"
-        src={`http://localhost:3000/api/media/${episode.Id}/cover`}
+        src={`/api/media/${episode.Id}/cover`}
         alt=""
         onError={(e) => {
           const img = e.currentTarget;

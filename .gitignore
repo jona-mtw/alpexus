@@ -25,3 +25,4 @@ dist-ssr
 *.env
 backend/storage/
 frontend/node_modules/
+backend/.env

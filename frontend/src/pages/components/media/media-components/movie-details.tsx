@@ -40,7 +40,7 @@ function MovieDetails({ movie, onReturn, isTvShow = false }: MovieProps) {
   useEffect(() => {
     if (!isTvShow) return;
     async function fetchEpisodeInfo() {
-      const episodeResponse = await fetch("http://localhost:3000/api/media/episodes");
+      const episodeResponse = await fetch("/api/media/episodes");
       const episodeData = await episodeResponse.json();
       setEpisodeData(episodeData);
     }
@@ -73,7 +73,7 @@ function MovieDetails({ movie, onReturn, isTvShow = false }: MovieProps) {
           <div className="play-video" onClick={() => setShowPlayer(true)}>
             <img
               className="movie-cover"
-              src={`http://localhost:3000/api/media/${movie.Id}/cover`}
+              src={`/api/media/${movie.Id}/cover`}
               alt=""
               onError={(e) => {
                 const img = e.currentTarget;

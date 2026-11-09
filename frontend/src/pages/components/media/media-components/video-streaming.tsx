@@ -57,7 +57,7 @@ function VideoPlayer({ movie, onReturn, isTvShow = false }: VideoPlayerProps) {
   useEffect(() => {
     if (!isTvShow) return;
     async function fetchEpisodeInfo() {
-      const episodeResponse = await fetch("http://localhost:3000/api/media/episodes");
+      const episodeResponse = await fetch("/api/media/episodes");
       const episodeData = await episodeResponse.json();
       setEpisodeData(episodeData);
     }
@@ -78,7 +78,7 @@ function VideoPlayer({ movie, onReturn, isTvShow = false }: VideoPlayerProps) {
         <video
           className="streamed-video"
           controls
-          src={`http://localhost:3000/api/media/${selectedEpsiode.Id}/stream?type=video`}
+          src={`/api/media/${selectedEpsiode.Id}/stream?type=video`}
         ></video>
         <div className="video-controls">
           <h2>{selectedEpsiode.Name}</h2>
@@ -92,7 +92,7 @@ function VideoPlayer({ movie, onReturn, isTvShow = false }: VideoPlayerProps) {
 
           <img
             className="movie-cover"
-            src={`http://localhost:3000/api/media/${selectedEpsiode.Id}/cover`}
+            src={`/api/media/${selectedEpsiode.Id}/cover`}
             alt=""
             onError={(e) => {
               const img = e.currentTarget;

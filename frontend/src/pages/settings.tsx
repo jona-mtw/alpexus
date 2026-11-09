@@ -6,7 +6,7 @@ function Settings() {
   const [capacity, setCapacity] = useState(0);
 
   async function saveUsername() {
-    await fetch("http://localhost:3000/api/settings", {
+    await fetch("/api/settings", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,7 +16,7 @@ function Settings() {
   }
 
   async function saveCapacity() {
-    await fetch("http://localhost:3000/api/settings", {
+    await fetch("/api/settings", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -19,7 +19,7 @@ function Movies() {
 
   useEffect(() => {
     async function fetchMovieInfo() {
-      const movieResponse = await fetch("http://localhost:3000/api/media/movies");
+      const movieResponse = await fetch("/api/media/movies");
       const moviesData = await movieResponse.json();
       setMovies(moviesData);
     }
@@ -41,7 +41,7 @@ function Movies() {
             >
               <img
                 className="movie-cover"
-                src={`http://localhost:3000/api/media/${movie.Id}/cover`}
+                src={`/api/media/${movie.Id}/cover`}
                 alt=""
                 onError={(e) => {
                   const img = e.currentTarget;

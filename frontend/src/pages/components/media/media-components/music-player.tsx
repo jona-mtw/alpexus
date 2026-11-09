@@ -75,14 +75,14 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
             setCurrentTime(event.currentTarget.currentTime);
           }
         }}
-        src={`http://localhost:3000/api/media/${song.Id}/stream`}
+        src={`/api/media/${song.Id}/stream`}
       ></audio>
       <div className="music-details-wrapper">
         <div className="cover-art">
           {hasImage ? (
             <img
               className="album-cover"
-              src={`http://localhost:3000/api/media/${song.Id}/cover`}
+              src={`/api/media/${song.Id}/cover`}
               alt={song.Name}
               onLoad={() => setHasImage(true)}
               onError={() => setHasImage(false)}
@@ -90,7 +90,7 @@ function MusicPlayer({ song, onNext, onPrevious }: MusicPlayerProps) {
           ) : (
             <img
               className="album-cover"
-              src={`http://localhost:3000/api/media/${song.AlbumId}/cover`}
+              src={`/api/media/${song.AlbumId}/cover`}
               onError={(e) => {
                 const img = e.currentTarget;
                 img.src = "http://localhost:5173/alpexus/placeholder.png";

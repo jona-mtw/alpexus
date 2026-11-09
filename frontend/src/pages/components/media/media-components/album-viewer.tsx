@@ -15,7 +15,7 @@ function AlbumViewer({ album, onClick }: AlbumProps) {
   return (
     <div className="album" onClick={onClick}>
       <img
-        src={`http://localhost:3000/api/media/${album.Id}/cover`}
+        src={`/api/media/${album.Id}/cover`}
         alt=""
         id="album-cover"
         onError={(e) => {

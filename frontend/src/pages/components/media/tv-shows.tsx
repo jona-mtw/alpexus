@@ -19,7 +19,7 @@ function TVShow() {
 
   useEffect(() => {
     async function fetchTvShowInfo() {
-      const tvShowResponse = await fetch("http://localhost:3000/api/media/tv-shows");
+      const tvShowResponse = await fetch("/api/media/tv-shows");
       const tvShowsData = await tvShowResponse.json();
       setTvShows(tvShowsData);
     }
@@ -42,7 +42,7 @@ function TVShow() {
             >
               <img
                 className="movie-cover"
-                src={`http://localhost:3000/api/media/${tvShow.Id}/cover`}
+                src={`/api/media/${tvShow.Id}/cover`}
                 alt=""
                 onError={(e) => {
                   const img = e.currentTarget;

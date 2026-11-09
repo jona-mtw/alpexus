@@ -19,13 +19,13 @@ function RecentActivityPanel(props: {
   date: string;
 }) {
   console.log(props.id);
-  console.log(`http://localhost:3000/api/media/${props.id}/cover`);
+  console.log(`/api/media/${props.id}/cover`);
   return (
     <>
       <div className="recent-activity-panel">
         <img
           className="recommended-bg"
-          src={`http://localhost:3000/api/media/${props.id}/cover`}
+          src={`/api/media/${props.id}/cover`}
           alt=""
           onError={(e) => {
             const img = e.currentTarget;
@@ -59,7 +59,7 @@ function Home({ onRecentFileClicked }: HomeProp) {
   const [settings, setSettings] = useState<Settings | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/files/recent")
+    fetch("/api/files/recent")
       .then((response) => {
         if (response.ok) {
           console.log("Recent Files Fetched");
@@ -77,13 +77,11 @@ function Home({ onRecentFileClicked }: HomeProp) {
   useEffect(() => {
     async function fetchMediaInfo() {
       try {
-        const episodeResponse = await (
-          await fetch("http://localhost:3000/api/media/episodes")
-        ).json();
+        const episodeResponse = await (await fetch("/api/media/episodes")).json();
 
-        const movieResponse = await (await fetch("http://localhost:3000/api/media/movies")).json();
+        const movieResponse = await (await fetch("/api/media/movies")).json();
 
-        const musicResponse = await (await fetch("http://localhost:3000/api/media/songs")).json();
+        const musicResponse = await (await fetch("/api/media/songs")).json();
 
         setMediaInfo([...episodeResponse, ...movieResponse, ...musicResponse]);
       } catch (error) {
@@ -93,7 +91,7 @@ function Home({ onRecentFileClicked }: HomeProp) {
     fetchMediaInfo();
 
     async function getSettings() {
-      const response = await fetch("http://localhost:3000/api/settings");
+      const response = await fetch("/api/settings");
       const data: Settings = await response.json();
       setSettings(data);
     }

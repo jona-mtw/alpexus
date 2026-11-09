@@ -21,7 +21,7 @@ function Files({ quickAccessFilePath = "" }: FilesProps) {
   const [files, setFiles] = useState<DirectoryEntry[]>([]);
   const [refresh, setRefresh] = useState(0);
   useEffect(() => {
-    fetch(`http://localhost:3000/api/files?path=${encodeURIComponent(filePath)}`)
+    fetch(`/api/files?path=${encodeURIComponent(filePath)}`)
       .then((response) => {
         if (response.ok) {
           console.log("Files fetched");
@@ -40,7 +40,7 @@ function Files({ quickAccessFilePath = "" }: FilesProps) {
     const formData = new FormData();
     formData.append("path", filePath);
     formData.append("file", file);
-    const response = await fetch("http://localhost:3000/api/files/upload", {
+    const response = await fetch("/api/files/upload", {
       method: "POST",
       body: formData,
     });
@@ -51,7 +51,7 @@ function Files({ quickAccessFilePath = "" }: FilesProps) {
   }
 
   async function createFolder(name: string) {
-    const response = await fetch("http://localhost:3000/api/media/folder", {
+    const response = await fetch("/api/media/folder", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,7 +69,7 @@ function Files({ quickAccessFilePath = "" }: FilesProps) {
       `Are you ready to delete ${entry.name}${isFolder ? " and everything inside it" : ""}?`,
     );
     if (!confirmed) return;
-    const response = await fetch(`http://localhost:3000/api/files${isFolder ? "/folder" : ""}`, {
+    const response = await fetch(`/api/files${isFolder ? "/folder" : ""}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

@@ -26,8 +26,8 @@ function Music() {
   useEffect(() => {
     async function fetchMusicInfo() {
       const [songResponse, albumsResponse] = await Promise.all([
-        fetch("http://localhost:3000/api/media/songs"),
-        fetch("http://localhost:3000/api/media/albums"),
+        fetch("/api/media/songs"),
+        fetch("/api/media/albums"),
       ]);
       const songsData = await songResponse.json();
       const albumsData = await albumsResponse.json();
@@ -74,7 +74,7 @@ function Music() {
                     <h4>{album.Artists[0]}</h4>
                   </div>
                   <img
-                    src={`http://localhost:3000/api/media/${album.Id}/cover`}
+                    src={`/api/media/${album.Id}/cover`}
                     alt=""
                     id="album-cover-header"
                     onError={(e) => {

@@ -11,9 +11,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 const STORAGE = path.resolve("storage");
-const SETTINGS_PATH = path.resolve(STORAGE, "settings.json");
+const FRONTEND_DIST = path.resolve(__dirname, "../../frontend/dist");
+const SETTINGS_PATH = path.join(STORAGE, "settings.json");
 
 async function getSafeStoragePath(relativePath: string) {
   const root = await fs.realpath(STORAGE);
@@ -117,7 +118,7 @@ async function getDirectoryContents(
       name: path.parse(child.name).name,
       type: child.isDirectory() ? "folder" : "file",
       dateModified: stats.mtime,
-      size: needSize ? (child.isDirectory() ? fileSize[0] : stats.size) : 0,
+      size: needSize ? (child.isDirectory() ? fileSize[0] : fileSize[1] === 1 ? stats.size : 0) : 0,
       fileType: path.extname(child.name).toLowerCase().slice(1),
       fileNo: fileSize[1],
     });
@@ -208,7 +209,7 @@ const storage = multer.diskStorage({
           return;
         }
         const stats = await fs.stat(realDestination);
-        if (!stats.isFile()) {
+        if (!stats.isDirectory()) {
           callback(new Error("Destination is not a folder"), "");
           return;
         }
@@ -517,6 +518,14 @@ app.post("/api/settings", async (req, res) => {
 });
 //#endregion
 
+app.use(express.static(FRONTEND_DIST));
+app.use((req, res, next) => {
+  if (req.method !== "GET" || req.path.startsWith("/api")) {
+    return next();
+  }
+  res.sendFile(path.join(FRONTEND_DIST, "index.html"));
+});
+
 async function startServer() {
   try {
     await fs.mkdir(STORAGE, { recursive: true });
@@ -528,7 +537,5 @@ async function startServer() {
     console.error("Failed to start server:", error);
   }
 }
-
-startServer();
 
 startServer();

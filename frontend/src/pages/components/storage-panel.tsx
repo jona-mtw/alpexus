@@ -31,6 +31,7 @@ type Settings = {
 };
 
 function StorageContainer() {
+  console.log("StorageContainer rendered");
   const [settings, setSettings] = useState<Settings>({ capacity: 2 });
   const [refresh, setRefresh] = useState(0);
 
@@ -48,7 +49,7 @@ function StorageContainer() {
 
   useEffect(() => {
     async function fetchStorageSize() {
-      const response = await fetch(`http://localhost:3000/api/files?path=`);
+      const response = await fetch(`/api/files?path=`);
       const files = await response.json();
       setTotalSize(files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0));
       setTotalFileNo(files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0));
@@ -60,9 +61,7 @@ function StorageContainer() {
       let fileNo = 0;
 
       for (const imgFileExtension of imgFiles) {
-        const response = await fetch(
-          `http://localhost:3000/api/files?fileType=${imgFileExtension}`,
-        );
+        const response = await fetch(`/api/files?fileType=${imgFileExtension}`);
         const files = await response.json();
         totalSize += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
         fileNo += files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0);
@@ -78,9 +77,7 @@ function StorageContainer() {
       let fileNo = 0;
 
       for (const docFileExtension of docFiles) {
-        const response = await fetch(
-          `http://localhost:3000/api/files?fileType=${docFileExtension}`,
-        );
+        const response = await fetch(`/api/files?fileType=${docFileExtension}`);
         const files = await response.json();
         totalSize += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
         fileNo += files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0);
@@ -96,9 +93,7 @@ function StorageContainer() {
       let fileNo = 0;
 
       for (const mediaFileExtension of mediaFiles) {
-        const response = await fetch(
-          `http://localhost:3000/api/files?fileType=${mediaFileExtension}`,
-        );
+        const response = await fetch(`/api/files?fileType=${mediaFileExtension}`);
         const files = await response.json();
         totalSize += files.reduce((total: number, file: DirectoryEntry) => total + file.size, 0);
         fileNo += files.reduce((total: number, file: DirectoryEntry) => total + file.fileNo, 0);
@@ -116,12 +111,15 @@ function StorageContainer() {
 
   useEffect(() => {
     async function getSettings() {
-      const response = await fetch("http://localhost:3000/api/settings");
+      const response = await fetch("/api/settings");
       const data: Settings = await response.json();
       setSettings(data);
     }
     getSettings();
-  });
+  }, []);
+
+  const capacityBytes = settings.capacity;
+  const storagePercentage = Math.min((totalSize / capacityBytes) * 100, 100);
 
   return (
     <>
@@ -131,8 +129,8 @@ function StorageContainer() {
           className="storage-gauge"
           style={{
             background: `conic-gradient(
-              #7765E3 0% ${(totalSize / settings.capacity) * 100}%,
-              #30364B ${(totalSize / settings.capacity) * 100}% 100%
+              #7765E3 0% ${storagePercentage}%,
+              #30364B ${storagePercentage}% 100%
             )`,
           }}
         >

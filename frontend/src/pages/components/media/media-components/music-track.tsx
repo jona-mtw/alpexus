@@ -20,7 +20,7 @@ function MusicTrack({ song, onClick }: MusicTrackProps) {
       {hasImage ? (
         <img
           className="album-cover"
-          src={`http://localhost:3000/api/media/${song.Id}/cover`}
+          src={`/api/media/${song.Id}/cover`}
           alt={song.Name}
           onLoad={() => setHasImage(true)}
           onError={() => setHasImage(false)}
@@ -28,7 +28,7 @@ function MusicTrack({ song, onClick }: MusicTrackProps) {
       ) : (
         <img
           className="album-cover"
-          src={`http://localhost:3000/api/media/${song.AlbumId}/cover`}
+          src={`/api/media/${song.AlbumId}/cover`}
           onError={(e) => {
             const img = e.currentTarget;
             img.src = "http://localhost:5173/alpexus/placeholder.png";
