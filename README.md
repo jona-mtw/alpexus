@@ -1,6 +1,8 @@
 # Alpexus
 
-Alpexus is a web server, designed as an alternative to services such as Google Drive, OneDrive, Netflix, and Spotify for submission to the Cloudfall program ran by Hackclub, made using React and Node.js
+<img width="2246" height="1542" alt="image" src="https://github.com/user-attachments/assets/879e7ebb-60ba-490d-979b-82eb4204e4ef" />
+
+Alpexus is a web server, designed as an alternative to services such as Google Drive, OneDrive, Netflix, and Spotify for submission to the Cloudfall program ran by Hackclub, made using React and Node.js (best viewed on a wide screen).
 
 ## Features
 - video and audio streaming
@@ -48,5 +50,10 @@ Run `docker compose down`, making sure the repository's root directory is open.
 ### Adding media: 
 1) In Alpexus, go to Files, and click New Folder. You can name it whatever you want, but for your sake I suggest you name it something along the lines of Media. Then you can make folders inside that called Movies, TV-Shows, and Music depending if you want/have the files for all of them.
 2) Open the Jellyfin dashboard, and find `Libraries>Libraries` in the sidebar. Click Add Media Library, and then click the appropriate Content Type, and then find where your Movies, TV-Shows and Music folders are.
-3) When you start adding your files, remember that Jellyfin likes them in a certain order. Seperate your media by show/movie/album. And for shows, separate your episodes by seasons. By "separate" I mean create new folders.
-4) Whenever you add media files to those folders, they will update automatically with Alpexus.
+3) When you start adding your files, remember that Jellyfin likes them in a certain order. Separate your media by show/movie/album. And for shows, separate your episodes by seasons. By "separate" I mean create new folders.
+
+For Example:
+
+<img width="342" height="332" alt="image" src="https://github.com/user-attachments/assets/94ab920e-571f-4865-8c23-549690bb963c" />
+
+5) Whenever you add media files to those folders, they will update automatically with Alpexus.
